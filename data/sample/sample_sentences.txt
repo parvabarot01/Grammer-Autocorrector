@@ -1,0 +1,8 @@
+She go to school everyday.
+# correct: She goes to school every day.
+
+The cat are sleeping on sofa.
+# correct: The cat is sleeping on the sofa.
+
+I have seen an interesting grammar mistake here.
+# correct: I have seen an interesting grammar mistake here.

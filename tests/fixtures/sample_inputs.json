@@ -1,0 +1,12 @@
+{
+  "samples": [
+    {
+      "input": "She go to school everyday.",
+      "expected": "She goes to school every day."
+    },
+    {
+      "input": "He have a apple.",
+      "expected": "He has an apple."
+    }
+  ]
+}
