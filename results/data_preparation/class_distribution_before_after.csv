@@ -1,0 +1,10 @@
+normalized_error_type,before_full,after_clean_full,clean_train,balanced_train
+article,100,97,79,508
+capitalization,40,39,31,508
+mixed_multiple,438,407,327,508
+other,649,636,508,508
+preposition,95,95,76,508
+punctuation,198,190,153,508
+spelling,100,88,70,508
+subject_verb_agreement,100,100,80,508
+tense,298,295,236,508

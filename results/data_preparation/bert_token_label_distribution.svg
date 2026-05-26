@@ -1,0 +1,12 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='172'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .value{font-weight:bold;}</style>
+<text class='title' x='28' y='32'>BERT Token Label Distribution</text>
+<text x='28' y='87'>CORRECT</text>
+<rect x='328' y='70' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='70' width='650.00' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='990' y='87'>11036</text>
+<text x='28' y='123'>ERROR</text>
+<rect x='328' y='106' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='106' width='179.93' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='990' y='123'>3055</text>
+</svg>

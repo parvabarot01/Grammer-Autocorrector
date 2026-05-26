@@ -1,0 +1,7 @@
+{
+  "total_examples": 1560,
+  "total_tokens": 14091,
+  "correct_token_count": 11036,
+  "error_token_count": 3055,
+  "correct_to_error_ratio": 3.6124
+}

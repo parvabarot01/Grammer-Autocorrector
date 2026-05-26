@@ -1,0 +1,40 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='424'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .value{font-weight:bold;}</style>
+<text class='title' x='28' y='32'>Error Type Distribution Before Cleaning</text>
+<text x='28' y='87'>article</text>
+<rect x='328' y='70' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='70' width='100.15' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='87'>100</text>
+<text x='28' y='123'>capitalization</text>
+<rect x='328' y='106' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='106' width='40.06' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='123'>40</text>
+<text x='28' y='159'>mixed_multiple</text>
+<rect x='328' y='142' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='142' width='438.67' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='159'>438</text>
+<text x='28' y='195'>other</text>
+<rect x='328' y='178' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='178' width='650.00' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='195'>649</text>
+<text x='28' y='231'>preposition</text>
+<rect x='328' y='214' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='214' width='95.15' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='231'>95</text>
+<text x='28' y='267'>punctuation</text>
+<rect x='328' y='250' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='250' width='198.31' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='267'>198</text>
+<text x='28' y='303'>spelling</text>
+<rect x='328' y='286' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='286' width='100.15' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='303'>100</text>
+<text x='28' y='339'>subject_verb_agreement</text>
+<rect x='328' y='322' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='322' width='100.15' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='339'>100</text>
+<text x='28' y='375'>tense</text>
+<rect x='328' y='358' width='650' height='26' rx='4' fill='#e5e7eb' />
+<rect x='328' y='358' width='298.46' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='990' y='375'>298</text>
+</svg>
