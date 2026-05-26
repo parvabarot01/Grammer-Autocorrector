@@ -210,6 +210,38 @@ Knowledge documents and user query text.
 Outputs:
 Retrieved chunks, augmented prompts, and RAG-assisted corrections.
 
+Retrieval flow:
+
+```text
+Grammar documents or rules
+   |
+   v
+Chunking with overlap
+   |
+   v
+Embedding encoder
+   |
+   +--> SentenceTransformer when available
+   |
+   \--> Hashing fallback encoder for local/offline tests
+   |
+   v
+FAISS IndexFlatL2 or numpy fallback
+   |
+   v
+Top-k RetrievedChunk objects
+   |
+   v
+Prompt template augmentation
+```
+
+Key design details:
+
+- The pipeline persists `chunks.json`, `metadata.json`, and `embeddings.npy` under `data/vector_store/`.
+- FAISS is the preferred backend for nearest-neighbor retrieval.
+- A deterministic hashing encoder and numpy distance search are used as a local fallback when FAISS or sentence-transformers are unavailable.
+- Retrieved chunks are surfaced as `RetrievedChunk(text, score, source, chunk_id)` records for downstream prompting and explainability.
+
 ### 2.5 Prompt Versioning Module
 
 Purpose:
@@ -228,6 +260,29 @@ Prompt templates, metadata, evaluation scores.
 Outputs:
 Version registry entries and active prompt selection.
 
+Version lifecycle:
+
+```text
+Register prompt
+   |
+   v
+Assign semver id
+   |
+   v
+Persist registry JSON
+   |
+   +--> update metrics
+   +--> promote to active
+   \--> rollback to previous active prompt
+```
+
+Key design details:
+
+- Prompt versions are stored in `data/prompt_registry.json`.
+- The registry tracks `versions`, `events`, and `active_history`.
+- Default versions include a simple prompt, a context-augmented prompt, and a chain-of-thought prompt.
+- Promotions and rollbacks are logged as registry events for traceability.
+
 ### 2.6 Guardrails Module
 
 Purpose:
@@ -244,6 +299,48 @@ Original user text and corrected output.
 
 Outputs:
 Structured validation and policy reports.
+
+Decision tree:
+
+```text
+Input text
+   |
+   v
+Empty? ---------- yes --> error
+   |
+   no
+   |
+Length > 1000? -- yes --> error
+   |
+   no
+   |
+Length > 500? --- yes --> warning
+   |
+   v
+Prompt injection pattern? -- yes --> error
+   |
+   no
+   |
+   v
+Toxicity scan + bias scan
+   |
+   v
+Optional output validation
+   |
+   +--> ratio too large? --> error
+   +--> meaning drift? --> warning
+   +--> unknown tokens? --> error
+   |
+   v
+FullGuardrailReport
+```
+
+Key design details:
+
+- Input validation distinguishes warnings from hard failures.
+- Toxicity detection uses a rule-based keyword list tuned for low-latency checks.
+- Bias detection focuses on simple gender-coded and default-pronoun patterns.
+- Output validation checks length ratio, meaning preservation, and placeholder-token artifacts.
 
 ### 2.7 FastAPI Layer
 

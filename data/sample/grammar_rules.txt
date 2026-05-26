@@ -1,0 +1,30 @@
+Subject-verb agreement rule 1: A singular subject normally takes a singular verb in the present tense.
+Subject-verb agreement rule 2: A plural subject normally takes a plural verb in the present tense.
+Subject-verb agreement rule 3: Collective nouns may take singular verbs when the group acts as one unit.
+Subject-verb agreement rule 4: When subjects are joined by "and," use a plural verb unless the phrase names one idea.
+Subject-verb agreement rule 5: When subjects are joined by "or" or "nor," match the verb to the nearer subject.
+Subject-verb agreement rule 6: Indefinite pronouns such as everyone, each, and somebody usually take singular verbs.
+Subject-verb agreement rule 7: Phrases between the subject and verb do not change the verb form.
+Subject-verb agreement rule 8: Titles of books, movies, or organizations usually take singular verbs.
+Subject-verb agreement rule 9: Amounts of time, money, or distance treated as a unit usually take singular verbs.
+Subject-verb agreement rule 10: In there-is and there-are constructions, choose the verb based on the real subject that follows.
+Article usage rule 1: Use "a" before a singular count noun that begins with a consonant sound.
+Article usage rule 2: Use "an" before a singular count noun that begins with a vowel sound.
+Article usage rule 3: Use "the" when the noun is specific or already known to the reader.
+Article usage rule 4: Omit articles before most plural or uncountable nouns when speaking generally.
+Article usage rule 5: Use "the" with unique nouns such as the sun, the moon, or the internet when context requires specificity.
+Tense consistency rule 1: Keep verb tense consistent within the same time frame unless the meaning shifts in time.
+Tense consistency rule 2: Use simple past for completed actions that happened at a definite time in the past.
+Tense consistency rule 3: Use present perfect for actions connected to the present without a finished time marker.
+Tense consistency rule 4: Use past continuous for an action that was in progress at a specific time in the past.
+Tense consistency rule 5: Use future perfect for actions that will be completed before a future reference point.
+Preposition usage rule 1: Use "in" for months, years, large spaces, and enclosed areas.
+Preposition usage rule 2: Use "on" for days, dates, and surfaces.
+Preposition usage rule 3: Use "at" for specific times, addresses, or exact locations.
+Preposition usage rule 4: Some verbs require fixed prepositions, such as interested in, depend on, and capable of.
+Preposition usage rule 5: Avoid unnecessary final prepositions unless they are part of a natural phrasal verb.
+Punctuation rule 1: End complete statements with a period, questions with a question mark, and strong exclamations with an exclamation mark.
+Punctuation rule 2: Use commas to separate items in a series and to set off introductory elements when needed.
+Punctuation rule 3: Use an apostrophe for contractions and to show possession, but not for simple plurals.
+Punctuation rule 4: Use quotation marks around direct speech and punctuate the quoted sentence according to standard dialogue rules.
+Punctuation rule 5: Avoid comma splices by joining independent clauses with a conjunction, semicolon, or period.

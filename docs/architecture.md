@@ -88,3 +88,39 @@ Use Gradio for the first-generation UI instead of building a custom React applic
 - UI components for text input, tables, and visualization are available quickly.
 - Long-term visual customization is more limited than a custom frontend.
 - A future React frontend can still be added after core workflows stabilize.
+
+## ADR-006: Choice of FAISS Over Pinecone for the Initial Vector Store
+
+### Status
+Accepted
+
+### Context
+The RAG subsystem needs a vector index that works for local development, offline experiments, and inexpensive iterative testing. Managed vector databases would add operational cost and external service dependencies too early in the project.
+
+### Decision
+Use FAISS as the primary vector-store backend for the first release instead of Pinecone.
+
+### Consequences
+
+- The project can run retrieval locally without external infrastructure.
+- Development and testing stay inexpensive and portable.
+- Persistence is file-based and simple to version conceptually.
+- Scaling to hosted, multi-tenant use cases will require a later migration path or adapter layer.
+
+## ADR-007: Rule-Based Toxicity Filter vs. ML Classifier
+
+### Status
+Accepted
+
+### Context
+The project needs responsible AI guardrails, but the early product goal emphasizes low latency, straightforward explainability, and minimal infrastructure overhead. A full toxicity model would improve nuance but would also add dependencies and serving complexity.
+
+### Decision
+Use a rule-based toxicity filter in v1 instead of a dedicated ML toxicity classifier.
+
+### Consequences
+
+- Guardrail checks remain fast and easy to inspect.
+- False positives and false negatives are more likely than with a tuned classifier.
+- The implementation is easier to test and deploy in offline or low-resource settings.
+- A later release can swap the rule-based layer for a classifier behind the same interface if quality requirements increase.

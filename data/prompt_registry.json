@@ -1,0 +1,46 @@
+{
+  "versions": [
+    {
+      "version_id": "v1.0.0",
+      "template": "Correct the following English sentence.\nSentence: {input}\nReturn only the corrected sentence.",
+      "description": "Simple correction prompt with no external context.",
+      "created_at": "2026-05-25T00:00:00+00:00",
+      "metrics": {
+        "gleu": 0.61,
+        "exact_match": 0.52
+      },
+      "is_active": false
+    },
+    {
+      "version_id": "v1.1.0",
+      "template": "Use the grammar guidance below to correct the sentence.\nContext:\n{context}\n\nSentence: {input}\nReturn only the corrected sentence.",
+      "description": "Context-augmented prompt for RAG-assisted correction.",
+      "created_at": "2026-05-25T00:00:01+00:00",
+      "metrics": {
+        "gleu": 0.68,
+        "exact_match": 0.58
+      },
+      "is_active": true
+    },
+    {
+      "version_id": "v2.0.0",
+      "template": "Identify the error type, reason briefly, and then provide the corrected sentence.\nContext:\n{context}\n\nSentence: {input}",
+      "description": "Chain-of-thought style prompt with error type identification.",
+      "created_at": "2026-05-25T00:00:02+00:00",
+      "metrics": {
+        "gleu": 0.7,
+        "exact_match": 0.6
+      },
+      "is_active": false
+    }
+  ],
+  "events": [
+    {
+      "timestamp": "2026-05-25T00:00:03+00:00",
+      "event": "initialize_default_registry"
+    }
+  ],
+  "active_history": [
+    "v1.1.0"
+  ]
+}

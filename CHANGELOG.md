@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0] - Sprint 4
+### Added
+- GrammarRAGPipeline with FAISS-compatible vector indexing, embedding search, and prompt augmentation
+- 30-rule grammar knowledge base
+- PromptVersionManager with semver versioning, promotion, rollback, and metrics updates
+- 3 pre-registered prompt versions for simple, RAG-augmented, and chain-of-thought prompting
+- GrammarGuardrails with input/output validation, toxicity filtering, and bias detection
+- RAG pipeline demo notebook
+- Unit tests for guardrails
+- Integration tests for the RAG, prompt, and guardrail pipeline
+
 ## [0.3.0] - Sprint 3
 ### Added
 - T5GrammarCorrector with fine-tuning, beam search decoding, and batch correction
