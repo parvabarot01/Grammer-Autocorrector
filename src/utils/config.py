@@ -9,7 +9,6 @@ from typing import Optional, Union
 
 from dotenv import load_dotenv
 
-
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 

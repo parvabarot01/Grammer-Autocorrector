@@ -9,7 +9,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, List, Mapping, MutableSequence, Tuple
 
-
 LOGGER = logging.getLogger(__name__)
 
 try:

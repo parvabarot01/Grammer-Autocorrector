@@ -12,7 +12,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional
 
 import numpy as np
 
-
 LOGGER = logging.getLogger(__name__)
 
 
@@ -161,18 +160,25 @@ class GrammarRAGPipeline:
         )
         return prompt_template.format(input=query, context=context_block)
 
-    def rag_correct(self, text: str, llm_fn: Callable) -> str:
+    def rag_correct(
+        self,
+        text: str,
+        llm_fn: Callable,
+        template: str | None = None,
+    ) -> str:
         """Run retrieval-augmented prompt construction and call an LLM function.
 
         Args:
             text: Input sentence to correct.
             llm_fn: Callable that accepts a prompt string and returns model output.
+            template: Optional prompt template containing `{input}` and
+                `{context}` placeholders.
 
         Returns:
             str: Post-processed corrected text.
         """
 
-        prompt = self.augment_prompt(text)
+        prompt = self.augment_prompt(text, template=template)
         response = llm_fn(prompt)
         return str(response).strip()
 

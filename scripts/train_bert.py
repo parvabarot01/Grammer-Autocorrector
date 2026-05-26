@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Tuple
 from src.models.bert_detector import BERTGrammarDetector
 from src.utils.config import BASE_DIR, load_config
 
-
 LOGGER = logging.getLogger(__name__)
 
 

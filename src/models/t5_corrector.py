@@ -14,7 +14,6 @@ from tqdm.auto import tqdm
 from src.utils.evaluation import Evaluator
 from src.utils.preprocessing import GrammarPreprocessor
 
-
 LOGGER = logging.getLogger(__name__)
 
 
@@ -84,9 +83,7 @@ class T5GrammarCorrector:
             return_tensors="pt",
         )
 
-    def correct(
-        self, text: str, num_beams: int = 4, max_length: int = 128
-    ) -> str:
+    def correct(self, text: str, num_beams: int = 4, max_length: int = 128) -> str:
         """Correct a single sentence with beam search decoding.
 
         Args:

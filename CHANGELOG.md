@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0] - Sprint 5
+### Added
+- FastAPI REST API with health, correction, detection, knowledge base, prompt management, and evaluation endpoints
+- Pydantic request and response schemas with validation and OpenAPI examples
+- CORS, request timing, and request ID middleware
+- Gradio web interface with six workflow tabs
+- API integration tests using FastAPI TestClient and mock runtime dependencies
+- Dockerfile and docker-compose.yml for API and UI deployment
+- Complete API reference and deployment guide
+
 ## [0.4.0] - Sprint 4
 ### Added
 - GrammarRAGPipeline with FAISS-compatible vector indexing, embedding search, and prompt augmentation

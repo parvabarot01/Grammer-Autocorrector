@@ -101,9 +101,7 @@ class Evaluator:
                 self._normalize_edit(edit)
                 for edit in self._extract_edits(source_text, corrected_text)
             }
-            normalized_gold = {
-                self._normalize_edit(edit) for edit in reference_edits
-            }
+            normalized_gold = {self._normalize_edit(edit) for edit in reference_edits}
 
             true_positives += len(predicted_edits & normalized_gold)
             false_positives += len(predicted_edits - normalized_gold)
@@ -111,7 +109,7 @@ class Evaluator:
 
         precision = self._safe_divide(true_positives, true_positives + false_positives)
         recall = self._safe_divide(true_positives, true_positives + false_negatives)
-        beta_squared = 0.5 ** 2
+        beta_squared = 0.5**2
         denominator = (beta_squared * precision) + recall
         f05 = (
             ((1 + beta_squared) * precision * recall) / denominator

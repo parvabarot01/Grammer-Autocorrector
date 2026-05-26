@@ -12,7 +12,6 @@ from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional
 
 from tqdm.auto import tqdm
 
-
 LOGGER = logging.getLogger(__name__)
 
 
@@ -390,9 +389,7 @@ class BERTGrammarDetector:
                     continue
 
                 token_text = (
-                    text[start:end]
-                    if end <= len(text)
-                    else token_strings[token_index]
+                    text[start:end] if end <= len(text) else token_strings[token_index]
                 )
                 spans.append(
                     ErrorSpan(

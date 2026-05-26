@@ -11,7 +11,6 @@ from typing import Any, Dict, List, Tuple
 from src.models.t5_corrector import T5GrammarCorrector
 from src.utils.config import BASE_DIR, load_config
 
-
 LOGGER = logging.getLogger(__name__)
 
 

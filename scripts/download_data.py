@@ -17,7 +17,6 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
 MANIFEST_PATH = RAW_DATA_DIR / "manifest.json"
@@ -141,9 +140,10 @@ def download_file(url: str, destination: Path) -> Path:
     partial_path = destination.with_suffix(destination.suffix + ".part")
 
     try:
-        with urlopen(request, timeout=120) as response, partial_path.open(
-            "wb"
-        ) as output:  # noqa: S310
+        with (
+            urlopen(request, timeout=120) as response,
+            partial_path.open("wb") as output,
+        ):  # noqa: S310
             total_bytes = int(response.headers.get("Content-Length", "0"))
             bytes_written = 0
 
