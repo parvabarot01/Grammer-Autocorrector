@@ -7,7 +7,7 @@ install:
 	$(PIP) install -r requirements.txt
 
 lint:
-	$(PYTHON) -m flake8 src tests scripts
+	$(PYTHON) -m flake8 --max-line-length=88 src tests scripts
 	$(PYTHON) -m black --check src tests scripts
 	$(PYTHON) -m isort --check src tests scripts
 

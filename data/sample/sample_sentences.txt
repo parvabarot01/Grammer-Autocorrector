@@ -1,8 +1,63 @@
-She go to school everyday.
-# correct: She goes to school every day.
+# Subject-verb agreement errors
+She walk to school every morning.
+# correct: She walks to school every morning.
 
-The cat are sleeping on sofa.
-# correct: The cat is sleeping on the sofa.
+The dogs barks at every stranger.
+# correct: The dogs bark at every stranger.
 
-I have seen an interesting grammar mistake here.
-# correct: I have seen an interesting grammar mistake here.
+My brother and sister is coming tonight.
+# correct: My brother and sister are coming tonight.
+
+The list of items are on the desk.
+# correct: The list of items is on the desk.
+
+Each student need a notebook for class.
+# correct: Each student needs a notebook for class.
+
+# Article errors
+He bought a umbrella before the storm.
+# correct: He bought an umbrella before the storm.
+
+She is best player on the team.
+# correct: She is the best player on the team.
+
+I saw an university near the station.
+# correct: I saw a university near the station.
+
+They adopted cat from shelter downtown.
+# correct: They adopted a cat from the shelter downtown.
+
+We stayed at a old hotel by river.
+# correct: We stayed at an old hotel by the river.
+
+# Tense errors
+Yesterday I go to the library after class.
+# correct: Yesterday I went to the library after class.
+
+Last night they eat dinner at nine.
+# correct: Last night they ate dinner at nine.
+
+He will visited his grandparents last weekend.
+# correct: He visited his grandparents last weekend.
+
+We were watch a movie when the lights went out.
+# correct: We were watching a movie when the lights went out.
+
+By next month, I completed the course.
+# correct: By next month, I will have completed the course.
+
+# Spelling errors
+I recieved your mesage this morning.
+# correct: I received your message this morning.
+
+The enviroment in this city is very clean.
+# correct: The environment in this city is very clean.
+
+Please seperate the papers into two piles.
+# correct: Please separate the papers into two piles.
+
+Her adress was writen on the package.
+# correct: Her address was written on the package.
+
+The restuarant serves delicius pasta.
+# correct: The restaurant serves delicious pasta.
