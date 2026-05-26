@@ -11,3 +11,4 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 2026-05-26 01:15:03,003 | INFO | src.api.app | GET /favicon.ico completed in 0.63 ms request_id=6245c218-69df-4d66-bd37-71588bfb69f4
 2026-05-26 01:15:20,624 | INFO | src.api.app | GET / completed in 1.33 ms request_id=b5f31d1d-bc0b-4e58-8bbf-748b4200afce
 2026-05-26 01:15:21,107 | INFO | src.api.app | GET /favicon.ico completed in 1.40 ms request_id=f2305d08-e733-4f26-9684-6721aad819f9
+2026-05-26 01:43:58,431 | INFO | src.api.app | GET / completed in 17.23 ms request_id=47d29a62-424a-481a-9bc8-ea52252b2fd7

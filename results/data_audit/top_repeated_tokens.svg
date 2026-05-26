@@ -1,0 +1,64 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='670'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .axis{fill:#6b7280;} .value{font-weight:bold;}</style>
+<text class='title' x='30' y='32'>Top Repeated Tokens (Corrected Sentences)</text>
+<text x='30' y='87'>new</text>
+<rect x='360' y='70' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='70' width='610.00' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='87'>92.00</text>
+<text x='30' y='125'>than</text>
+<rect x='360' y='108' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='108' width='530.43' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='125'>80.00</text>
+<text x='30' y='163'>if</text>
+<rect x='360' y='146' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='146' width='371.30' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='163'>56.00</text>
+<text x='30' y='201'>store</text>
+<rect x='360' y='184' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='184' width='338.15' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='201'>51.00</text>
+<text x='30' y='239'>book</text>
+<rect x='360' y='222' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='222' width='338.15' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='239'>51.00</text>
+<text x='30' y='277'>very</text>
+<rect x='360' y='260' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='260' width='305.00' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='277'>46.00</text>
+<text x='30' y='315'>more</text>
+<rect x='360' y='298' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='298' width='305.00' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='315'>46.00</text>
+<text x='30' y='353'>car</text>
+<rect x='360' y='336' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='336' width='298.37' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='353'>45.00</text>
+<text x='30' y='391'>work</text>
+<rect x='360' y='374' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='374' width='291.74' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='391'>44.00</text>
+<text x='30' y='429'>will</text>
+<rect x='360' y='412' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='412' width='285.11' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='429'>43.00</text>
+<text x='30' y='467'>not</text>
+<rect x='360' y='450' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='450' width='278.48' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='467'>42.00</text>
+<text x='30' y='505'>students</text>
+<rect x='360' y='488' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='488' width='271.85' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='505'>41.00</text>
+<text x='30' y='543'>movie</text>
+<rect x='360' y='526' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='526' width='271.85' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='543'>41.00</text>
+<text x='30' y='581'>any</text>
+<rect x='360' y='564' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='564' width='271.85' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='581'>41.00</text>
+<text x='30' y='619'>cake</text>
+<rect x='360' y='602' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='602' width='251.96' height='26' rx='4' fill='#f59e0b' />
+<text class='value' x='982' y='619'>38.00</text>
+</svg>

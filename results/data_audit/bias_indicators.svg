@@ -1,0 +1,19 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='520'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .axis{stroke:#9ca3af;stroke-width:1;} .tick{fill:#6b7280;}</style>
+<text class='title' x='70' y='32'>Bias Indicators</text>
+<line class='axis' x1='70' y1='430' x2='1080' y2='430' />
+<line class='axis' x1='70' y1='70' x2='70' y2='430' />
+<rect x='70' y='46' width='14' height='14' fill='#2563eb' rx='2' />
+<text x='92' y='58'>male</text>
+<rect x='210' y='46' width='14' height='14' fill='#ec4899' rx='2' />
+<text x='232' y='58'>female</text>
+<rect x='350' y='46' width='14' height='14' fill='#14b8a6' rx='2' />
+<text x='372' y='58'>neutral</text>
+<text class='tick' x='575.00' y='450' text-anchor='middle'>Pronouns</text>
+<rect x='196.25' y='133.27' width='189.38' height='296.73' fill='#2563eb' rx='3' />
+<text x='290.94' y='127.27' text-anchor='middle'>272</text>
+<rect x='448.75' y='70.00' width='189.38' height='360.00' fill='#ec4899' rx='3' />
+<text x='543.44' y='82.00' text-anchor='middle'>330</text>
+<rect x='701.25' y='272.91' width='189.38' height='157.09' fill='#14b8a6' rx='3' />
+<text x='795.94' y='266.91' text-anchor='middle'>144</text>
+</svg>

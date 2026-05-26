@@ -1,0 +1,20 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='252'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .axis{fill:#6b7280;} .value{font-weight:bold;}</style>
+<text class='title' x='30' y='32'>Duplicate Frequency</text>
+<text x='30' y='87'>Exact original duplicates</text>
+<rect x='360' y='70' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='70' width='26.14' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='982' y='87'>3.00</text>
+<text x='30' y='125'>Exact pair duplicates</text>
+<rect x='360' y='108' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='108' width='26.14' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='982' y='125'>3.00</text>
+<text x='30' y='163'>Near-duplicate pairs</text>
+<rect x='360' y='146' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='146' width='52.29' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='982' y='163'>6.00</text>
+<text x='30' y='201'>Noisy rows</text>
+<rect x='360' y='184' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='184' width='610.00' height='26' rx='4' fill='#ef4444' />
+<text class='value' x='982' y='201'>70.00</text>
+</svg>

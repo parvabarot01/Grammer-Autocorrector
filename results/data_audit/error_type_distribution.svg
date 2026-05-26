@@ -1,0 +1,148 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='1468'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .axis{fill:#6b7280;} .value{font-weight:bold;}</style>
+<text class='title' x='30' y='32'>Explicit Error Type Distribution</text>
+<text x='30' y='87'>Sentence Structure Errors</text>
+<rect x='360' y='70' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='70' width='610.00' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='87'>103.00</text>
+<text x='30' y='125'>Verb Tense Errors</text>
+<rect x='360' y='108' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='108' width='592.23' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='125'>100.00</text>
+<text x='30' y='163'>Article Usage</text>
+<rect x='360' y='146' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='146' width='592.23' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='163'>100.00</text>
+<text x='30' y='201'>Subject-Verb Agreement</text>
+<rect x='360' y='184' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='184' width='592.23' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='201'>100.00</text>
+<text x='30' y='239'>Spelling Mistakes</text>
+<rect x='360' y='222' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='222' width='592.23' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='239'>100.00</text>
+<text x='30' y='277'>Preposition Usage</text>
+<rect x='360' y='260' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='260' width='562.62' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='277'>95.00</text>
+<text x='30' y='315'>Punctuation Errors</text>
+<rect x='360' y='298' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='298' width='355.34' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='315'>60.00</text>
+<text x='30' y='353'>Relative Clause Errors</text>
+<rect x='360' y='336' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='336' width='302.04' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='353'>51.00</text>
+<text x='30' y='391'>Ambiguity</text>
+<rect x='360' y='374' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='374' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='391'>50.00</text>
+<text x='30' y='429'>Negation Errors</text>
+<rect x='360' y='412' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='412' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='429'>50.00</text>
+<text x='30' y='467'>Tautology</text>
+<rect x='360' y='450' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='450' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='467'>50.00</text>
+<text x='30' y='505'>Mixed Metaphors/Idioms</text>
+<rect x='360' y='488' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='488' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='505'>50.00</text>
+<text x='30' y='543'>Incorrect Auxiliaries</text>
+<rect x='360' y='526' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='526' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='543'>50.00</text>
+<text x='30' y='581'>Slang, Jargon, and Colloquialisms</text>
+<rect x='360' y='564' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='564' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='581'>50.00</text>
+<text x='30' y='619'>Gerund and Participle Errors</text>
+<rect x='360' y='602' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='602' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='619'>50.00</text>
+<text x='30' y='657'>Abbreviation Errors</text>
+<rect x='360' y='640' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='640' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='657'>50.00</text>
+<text x='30' y='695'>Lack of Parallelism in Lists or Series</text>
+<rect x='360' y='678' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='678' width='296.12' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='695'>50.00</text>
+<text x='30' y='733'>Agreement in Comparative and Superlative Forms</text>
+<rect x='360' y='716' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='716' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='733'>49.00</text>
+<text x='30' y='771'>Passive Voice Overuse</text>
+<rect x='360' y='754' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='754' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='771'>49.00</text>
+<text x='30' y='809'>Conjunction Misuse</text>
+<rect x='360' y='792' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='792' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='809'>49.00</text>
+<text x='30' y='847'>Parallelism Errors</text>
+<rect x='360' y='830' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='830' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='847'>49.00</text>
+<text x='30' y='885'>Faulty Comparisons</text>
+<rect x='360' y='868' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='868' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='885'>49.00</text>
+<text x='30' y='923'>Inappropriate Register</text>
+<rect x='360' y='906' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='906' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='923'>49.00</text>
+<text x='30' y='961'>Mixed Conditionals</text>
+<rect x='360' y='944' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='944' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='961'>49.00</text>
+<text x='30' y='999'>Ellipsis Errors</text>
+<rect x='360' y='982' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='982' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='999'>49.00</text>
+<text x='30' y='1037'>Contractions Errors</text>
+<rect x='360' y='1020' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1020' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1037'>49.00</text>
+<text x='30' y='1075'>Infinitive Errors</text>
+<rect x='360' y='1058' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1058' width='290.19' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1075'>49.00</text>
+<text x='30' y='1113'>Quantifier Errors</text>
+<rect x='360' y='1096' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1096' width='284.27' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1113'>48.00</text>
+<text x='30' y='1151'>Clichés</text>
+<rect x='360' y='1134' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1134' width='284.27' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1151'>48.00</text>
+<text x='30' y='1189'>Pronoun Errors</text>
+<rect x='360' y='1172' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1172' width='278.35' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1189'>47.00</text>
+<text x='30' y='1227'>Modifiers Misplacement</text>
+<rect x='360' y='1210' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1210' width='272.43' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1227'>46.00</text>
+<text x='30' y='1265'>Capitalization Errors</text>
+<rect x='360' y='1248' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1248' width='236.89' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1265'>40.00</text>
+<text x='30' y='1303'>Sentence Fragments</text>
+<rect x='360' y='1286' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1286' width='236.89' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1303'>40.00</text>
+<text x='30' y='1341'>Word Choice/Usage</text>
+<rect x='360' y='1324' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1324' width='236.89' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1341'>40.00</text>
+<text x='30' y='1379'>Run-on Sentences</text>
+<rect x='360' y='1362' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1362' width='236.89' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1379'>40.00</text>
+<text x='30' y='1417'>Redundancy/Repetition</text>
+<rect x='360' y='1400' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='1400' width='118.45' height='26' rx='4' fill='#2563eb' />
+<text class='value' x='982' y='1417'>20.00</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='214'>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#111827;} .title{font-size:20px;font-weight:bold;} .axis{fill:#6b7280;} .value{font-weight:bold;}</style>
+<text class='title' x='30' y='32'>Train / Validation / Test Distribution</text>
+<text x='30' y='87'>train</text>
+<rect x='360' y='70' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='70' width='610.00' height='26' rx='4' fill='#8b5cf6' />
+<text class='value' x='982' y='87'>1612.00</text>
+<text x='30' y='125'>validation</text>
+<rect x='360' y='108' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='108' width='77.20' height='26' rx='4' fill='#8b5cf6' />
+<text class='value' x='982' y='125'>204.00</text>
+<text x='30' y='163'>test</text>
+<rect x='360' y='146' width='610' height='26' rx='4' fill='#e5e7eb' />
+<rect x='360' y='146' width='76.44' height='26' rx='4' fill='#8b5cf6' />
+<text class='value' x='982' y='163'>202.00</text>
+</svg>

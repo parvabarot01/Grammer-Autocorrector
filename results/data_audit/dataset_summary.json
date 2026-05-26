@@ -1,0 +1,2147 @@
+{
+  "generated_at": "2026-05-26T09:17:42.923106+00:00",
+  "inventory": [
+    {
+      "path": "data/processed/grammar_correction_full.jsonl",
+      "size_bytes": 598581,
+      "examples": 2018,
+      "classification": "primary-dataset",
+      "columns": [
+        "serial_number",
+        "error_type",
+        "original",
+        "corrected",
+        "references",
+        "source"
+      ],
+      "dtypes": {
+        "serial_number": "int64",
+        "error_type": "object",
+        "original": "object",
+        "corrected": "object",
+        "references": "object",
+        "source": "object"
+      },
+      "input_column": "original",
+      "corrected_column": "corrected",
+      "label_columns": [
+        "error_type"
+      ],
+      "metadata_columns": [
+        "serial_number",
+        "source"
+      ],
+      "sample_rows": [
+        {
+          "serial_number": 1,
+          "error_type": "Verb Tense Errors",
+          "original": "I goes to the store everyday.",
+          "corrected": "I go to the store everyday.",
+          "references": [
+            "I go to the store everyday."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 2,
+          "error_type": "Verb Tense Errors",
+          "original": "They was playing soccer last night.",
+          "corrected": "They were playing soccer last night.",
+          "references": [
+            "They were playing soccer last night."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 3,
+          "error_type": "Verb Tense Errors",
+          "original": "She have completed her homework.",
+          "corrected": "She has completed her homework.",
+          "references": [
+            "She has completed her homework."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 4,
+          "error_type": "Verb Tense Errors",
+          "original": "He don't know the answer.",
+          "corrected": "He doesn't know the answer.",
+          "references": [
+            "He doesn't know the answer."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 5,
+          "error_type": "Verb Tense Errors",
+          "original": "The sun rise in the east.",
+          "corrected": "The sun rises in the east.",
+          "references": [
+            "The sun rises in the east."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 6,
+          "error_type": "Verb Tense Errors",
+          "original": "I am eat pizza for lunch.",
+          "corrected": "I am eating pizza for lunch.",
+          "references": [
+            "I am eating pizza for lunch."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 7,
+          "error_type": "Verb Tense Errors",
+          "original": "The students studies for the exam.",
+          "corrected": "The students study for the exam.",
+          "references": [
+            "The students study for the exam."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 8,
+          "error_type": "Verb Tense Errors",
+          "original": "The car need to be repaired.",
+          "corrected": "The car needs to be repaired.",
+          "references": [
+            "The car needs to be repaired."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 9,
+          "error_type": "Verb Tense Errors",
+          "original": "She will goes to the party tonight.",
+          "corrected": "She will go to the party tonight.",
+          "references": [
+            "She will go to the party tonight."
+          ],
+          "source": "grammar_correction.csv"
+        },
+        {
+          "serial_number": 10,
+          "error_type": "Verb Tense Errors",
+          "original": "They watches the movie together.",
+          "corrected": "They watch the movie together.",
+          "references": [
+            "They watch the movie together."
+          ],
+          "source": "grammar_correction.csv"
+        }
+      ]
+    },
+    {
+      "path": "data/processed/grammar_correction_metadata.json",
+      "size_bytes": 6055,
+      "examples": null,
+      "classification": "dataset-metadata",
+      "columns": [
+        "dataset_name",
+        "source_file",
+        "random_seed",
+        "total_rows",
+        "fields",
+        "split_counts",
+        "error_type_distribution",
+        "split_counts_by_error_type",
+        "output_files"
+      ],
+      "dtypes": {
+        "dataset_name": "str",
+        "source_file": "str",
+        "random_seed": "int",
+        "total_rows": "int",
+        "fields": "list",
+        "split_counts": "dict",
+        "error_type_distribution": "dict",
+        "split_counts_by_error_type": "dict",
+        "output_files": "dict"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [
+        "error_type_distribution",
+        "split_counts_by_error_type"
+      ],
+      "metadata_columns": [],
+      "sample_rows": [
+        {
+          "dataset_name": "grammar_correction",
+          "source_file": "c:\\Users\\parva\\OneDrive\\Desktop\\Project\\Grammer Autocorrector\\data\\raw\\grammar_correction.csv",
+          "random_seed": 42,
+          "total_rows": 2018,
+          "fields": [
+            "serial_number",
+            "error_type",
+            "original",
+            "corrected",
+            "references",
+            "source",
+            "split"
+          ],
+          "split_counts": {
+            "train": 1612,
+            "validation": 204,
+            "test": 202
+          },
+          "error_type_distribution": {
+            "Abbreviation Errors": 50,
+            "Agreement in Comparative and Superlative Forms": 49,
+            "Ambiguity": 50,
+            "Article Usage": 100,
+            "Capitalization Errors": 40,
+            "Clichés": 48,
+            "Conjunction Misuse": 49,
+            "Contractions Errors": 49,
+            "Ellipsis Errors": 49,
+            "Faulty Comparisons": 49,
+            "Gerund and Participle Errors": 50,
+            "Inappropriate Register": 49,
+            "Incorrect Auxiliaries": 50,
+            "Infinitive Errors": 49,
+            "Lack of Parallelism in Lists or Series": 50,
+            "Mixed Conditionals": 49,
+            "Mixed Metaphors/Idioms": 50,
+            "Modifiers Misplacement": 46,
+            "Negation Errors": 50,
+            "Parallelism Errors": 49,
+            "Passive Voice Overuse": 49,
+            "Preposition Usage": 95,
+            "Pronoun Errors": 47,
+            "Punctuation Errors": 60,
+            "Quantifier Errors": 48,
+            "Redundancy/Repetition": 20,
+            "Relative Clause Errors": 51,
+            "Run-on Sentences": 40,
+            "Sentence Fragments": 40,
+            "Sentence Structure Errors": 103,
+            "Slang, Jargon, and Colloquialisms": 50,
+            "Spelling Mistakes": 100,
+            "Subject-Verb Agreement": 100,
+            "Tautology": 50,
+            "Verb Tense Errors": 100,
+            "Word Choice/Usage": 40
+          },
+          "split_counts_by_error_type": {
+            "train": {
+              "Abbreviation Errors": 40,
+              "Agreement in Comparative and Superlative Forms": 39,
+              "Ambiguity": 40,
+              "Article Usage": 80,
+              "Capitalization Errors": 32,
+              "Clichés": 38,
+              "Conjunction Misuse": 39,
+              "Contractions Errors": 39,
+              "Ellipsis Errors": 39,
+              "Faulty Comparisons": 39,
+              "Gerund and Participle Errors": 40,
+              "Inappropriate Register": 39,
+              "Incorrect Auxiliaries": 40,
+              "Infinitive Errors": 39,
+              "Lack of Parallelism in Lists or Series": 40,
+              "Mixed Conditionals": 39,
+              "Mixed Metaphors/Idioms": 40,
+              "Modifiers Misplacement": 37,
+              "Negation Errors": 40,
+              "Parallelism Errors": 39,
+              "Passive Voice Overuse": 39,
+              "Preposition Usage": 76,
+              "Pronoun Errors": 38,
+              "Punctuation Errors": 48,
+              "Quantifier Errors": 38,
+              "Redundancy/Repetition": 16,
+              "Relative Clause Errors": 41,
+              "Run-on Sentences": 32,
+              "Sentence Fragments": 32,
+              "Sentence Structure Errors": 82,
+              "Slang, Jargon, and Colloquialisms": 40,
+              "Spelling Mistakes": 80,
+              "Subject-Verb Agreement": 80,
+              "Tautology": 40,
+              "Verb Tense Errors": 80,
+              "Word Choice/Usage": 32
+            },
+            "validation": {
+              "Abbreviation Errors": 5,
+              "Agreement in Comparative and Superlative Forms": 5,
+              "Ambiguity": 5,
+              "Article Usage": 10,
+              "Capitalization Errors": 4,
+              "Clichés": 5,
+              "Conjunction Misuse": 5,
+              "Contractions Errors": 5,
+              "Ellipsis Errors": 5,
+              "Faulty Comparisons": 5,
+              "Gerund and Participle Errors": 5,
+              "Inappropriate Register": 5,
+              "Incorrect Auxiliaries": 5,
+              "Infinitive Errors": 5,
+              "Lack of Parallelism in Lists or Series": 5,
+              "Mixed Conditionals": 5,
+              "Mixed Metaphors/Idioms": 5,
+              "Modifiers Misplacement": 5,
+              "Negation Errors": 5,
+              "Parallelism Errors": 5,
+              "Passive Voice Overuse": 5,
+              "Preposition Usage": 10,
+              "Pronoun Errors": 5,
+              "Punctuation Errors": 6,
+              "Quantifier Errors": 5,
+              "Redundancy/Repetition": 2,
+              "Relative Clause Errors": 5,
+              "Run-on Sentences": 4,
+              "Sentence Fragments": 4,
+              "Sentence Structure Errors": 10,
+              "Slang, Jargon, and Colloquialisms": 5,
+              "Spelling Mistakes": 10,
+              "Subject-Verb Agreement": 10,
+              "Tautology": 5,
+              "Verb Tense Errors": 10,
+              "Word Choice/Usage": 4
+            },
+            "test": {
+              "Abbreviation Errors": 5,
+              "Agreement in Comparative and Superlative Forms": 5,
+              "Ambiguity": 5,
+              "Article Usage": 10,
+              "Capitalization Errors": 4,
+              "Clichés": 5,
+              "Conjunction Misuse": 5,
+              "Contractions Errors": 5,
+              "Ellipsis Errors": 5,
+              "Faulty Comparisons": 5,
+              "Gerund and Participle Errors": 5,
+              "Inappropriate Register": 5,
+              "Incorrect Auxiliaries": 5,
+              "Infinitive Errors": 5,
+              "Lack of Parallelism in Lists or Series": 5,
+              "Mixed Conditionals": 5,
+              "Mixed Metaphors/Idioms": 5,
+              "Modifiers Misplacement": 4,
+              "Negation Errors": 5,
+              "Parallelism Errors": 5,
+              "Passive Voice Overuse": 5,
+              "Preposition Usage": 9,
+              "Pronoun Errors": 4,
+              "Punctuation Errors": 6,
+              "Quantifier Errors": 5,
+              "Redundancy/Repetition": 2,
+              "Relative Clause Errors": 5,
+              "Run-on Sentences": 4,
+              "Sentence Fragments": 4,
+              "Sentence Structure Errors": 11,
+              "Slang, Jargon, and Colloquialisms": 5,
+              "Spelling Mistakes": 10,
+              "Subject-Verb Agreement": 10,
+              "Tautology": 5,
+              "Verb Tense Errors": 10,
+              "Word Choice/Usage": 4
+            }
+          },
+          "output_files": {
+            "full": "c:\\Users\\parva\\OneDrive\\Desktop\\Project\\Grammer Autocorrector\\data\\processed\\grammar_correction_full.jsonl",
+            "train": "c:\\Users\\parva\\OneDrive\\Desktop\\Project\\Grammer Autocorrector\\data\\processed\\grammar_correction_train.jsonl",
+            "validation": "c:\\Users\\parva\\OneDrive\\Desktop\\Project\\Grammer Autocorrector\\data\\processed\\grammar_correction_validation.jsonl",
+            "test": "c:\\Users\\parva\\OneDrive\\Desktop\\Project\\Grammer Autocorrector\\data\\processed\\grammar_correction_test.jsonl"
+          }
+        }
+      ]
+    },
+    {
+      "path": "data/processed/grammar_correction_test.jsonl",
+      "size_bytes": 62929,
+      "examples": 202,
+      "classification": "primary-dataset",
+      "columns": [
+        "serial_number",
+        "error_type",
+        "original",
+        "corrected",
+        "references",
+        "source",
+        "split"
+      ],
+      "dtypes": {
+        "serial_number": "int64",
+        "error_type": "object",
+        "original": "object",
+        "corrected": "object",
+        "references": "object",
+        "source": "object",
+        "split": "object"
+      },
+      "input_column": "original",
+      "corrected_column": "corrected",
+      "label_columns": [
+        "error_type"
+      ],
+      "metadata_columns": [
+        "serial_number",
+        "source",
+        "split"
+      ],
+      "sample_rows": [
+        {
+          "serial_number": 1721,
+          "error_type": "Abbreviation Errors",
+          "original": "My bro just joined the USMC yday.",
+          "corrected": "My brother just joined the United States Marine Corps yesterday.",
+          "references": [
+            "My brother just joined the United States Marine Corps yesterday."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1727,
+          "error_type": "Abbreviation Errors",
+          "original": "The doc prescribed me NSAIDs for my pain.",
+          "corrected": "The doctor prescribed me nonsteroidal anti-inflammatory drugs for my pain.",
+          "references": [
+            "The doctor prescribed me nonsteroidal anti-inflammatory drugs for my pain."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1735,
+          "error_type": "Abbreviation Errors",
+          "original": "The atm in the mall is out of svc.",
+          "corrected": "The automated teller machine in the mall is out of service.",
+          "references": [
+            "The automated teller machine in the mall is out of service."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1737,
+          "error_type": "Abbreviation Errors",
+          "original": "I've been feeling v tired lately, IDK why.",
+          "corrected": "I've been feeling very tired lately, I don't know why.",
+          "references": [
+            "I've been feeling very tired lately, I don't know why."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1760,
+          "error_type": "Abbreviation Errors",
+          "original": "My flight was del'd, so I'll arr late.",
+          "corrected": "My flight was delayed, so I'll arrive late.",
+          "references": [
+            "My flight was delayed, so I'll arrive late."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1085,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "He was more colder than his brother.",
+          "corrected": "He was colder than his brother.",
+          "references": [
+            "He was colder than his brother."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1087,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "She is most beautiful than her sister.",
+          "corrected": "She is more beautiful than her sister.",
+          "references": [
+            "She is more beautiful than her sister."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1104,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "He is the most strongest man in the competition.",
+          "corrected": "He is the strongest man in the competition.",
+          "references": [
+            "He is the strongest man in the competition."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1114,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "He is the most more skillful player on the team.",
+          "corrected": "He is the most skillful player on the team.",
+          "references": [
+            "He is the most skillful player on the team."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        },
+        {
+          "serial_number": 1115,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "The most shortest route is through the park.",
+          "corrected": "The shortest route is through the park.",
+          "references": [
+            "The shortest route is through the park."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "test"
+        }
+      ]
+    },
+    {
+      "path": "data/processed/grammar_correction_train.jsonl",
+      "size_bytes": 508506,
+      "examples": 1612,
+      "classification": "primary-dataset",
+      "columns": [
+        "serial_number",
+        "error_type",
+        "original",
+        "corrected",
+        "references",
+        "source",
+        "split"
+      ],
+      "dtypes": {
+        "serial_number": "int64",
+        "error_type": "object",
+        "original": "object",
+        "corrected": "object",
+        "references": "object",
+        "source": "object",
+        "split": "object"
+      },
+      "input_column": "original",
+      "corrected_column": "corrected",
+      "label_columns": [
+        "error_type"
+      ],
+      "metadata_columns": [
+        "serial_number",
+        "source",
+        "split"
+      ],
+      "sample_rows": [
+        {
+          "serial_number": 1720,
+          "error_type": "Abbreviation Errors",
+          "original": "He works at FB, but I work at MS.",
+          "corrected": "He works at Facebook, but I work at Microsoft.",
+          "references": [
+            "He works at Facebook, but I work at Microsoft."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1722,
+          "error_type": "Abbreviation Errors",
+          "original": "I'll be there ASAP, pls wait.",
+          "corrected": "I'll be there as soon as possible, please wait.",
+          "references": [
+            "I'll be there as soon as possible, please wait."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1723,
+          "error_type": "Abbreviation Errors",
+          "original": "She's a prof at UCLA, in the CS dept.",
+          "corrected": "She's a professor at the University of California, Los Angeles, in the Computer Science department.",
+          "references": [
+            "She's a professor at the University of California, Los Angeles, in the Computer Science department."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1724,
+          "error_type": "Abbreviation Errors",
+          "original": "The engine has 200hp and 300lb-ft tq.",
+          "corrected": "The engine has 200 horsepower and 300 pound-feet of torque.",
+          "references": [
+            "The engine has 200 horsepower and 300 pound-feet of torque."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1729,
+          "error_type": "Abbreviation Errors",
+          "original": "Their business model involves B2B and B2C svs.",
+          "corrected": "Their business model involves business-to-business and business-to-consumer services.",
+          "references": [
+            "Their business model involves business-to-business and business-to-consumer services."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1730,
+          "error_type": "Abbreviation Errors",
+          "original": "The H2O lvl in the tank is getting low.",
+          "corrected": "The water level in the tank is getting low.",
+          "references": [
+            "The water level in the tank is getting low."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1731,
+          "error_type": "Abbreviation Errors",
+          "original": "I think they use AI and ML in their app.",
+          "corrected": "I think they use artificial intelligence and machine learning in their app.",
+          "references": [
+            "I think they use artificial intelligence and machine learning in their app."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1732,
+          "error_type": "Abbreviation Errors",
+          "original": "Plz send me the PDF, not the DOC file.",
+          "corrected": "Please send me the Portable Document Format, not the Word Document file.",
+          "references": [
+            "Please send me the Portable Document Format, not the Word Document file."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1733,
+          "error_type": "Abbreviation Errors",
+          "original": "They're going to visit the MOMA nxt wk.",
+          "corrected": "They're going to visit the Museum of Modern Art next week.",
+          "references": [
+            "They're going to visit the Museum of Modern Art next week."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        },
+        {
+          "serial_number": 1736,
+          "error_type": "Abbreviation Errors",
+          "original": "My phone has GPS, but it's not v accurate.",
+          "corrected": "My phone has Global Positioning System, but it's not very accurate.",
+          "references": [
+            "My phone has Global Positioning System, but it's not very accurate."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "train"
+        }
+      ]
+    },
+    {
+      "path": "data/processed/grammar_correction_validation.jsonl",
+      "size_bytes": 64288,
+      "examples": 204,
+      "classification": "primary-dataset",
+      "columns": [
+        "serial_number",
+        "error_type",
+        "original",
+        "corrected",
+        "references",
+        "source",
+        "split"
+      ],
+      "dtypes": {
+        "serial_number": "int64",
+        "error_type": "object",
+        "original": "object",
+        "corrected": "object",
+        "references": "object",
+        "source": "object",
+        "split": "object"
+      },
+      "input_column": "original",
+      "corrected_column": "corrected",
+      "label_columns": [
+        "error_type"
+      ],
+      "metadata_columns": [
+        "serial_number",
+        "source",
+        "split"
+      ],
+      "sample_rows": [
+        {
+          "serial_number": 1725,
+          "error_type": "Abbreviation Errors",
+          "original": "In the meeting, they discussed GDPR and CCPA cmp.",
+          "corrected": "In the meeting, they discussed General Data Protection Regulation and California Consumer Privacy Act compliance.",
+          "references": [
+            "In the meeting, they discussed General Data Protection Regulation and California Consumer Privacy Act compliance."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1726,
+          "error_type": "Abbreviation Errors",
+          "original": "My new TV has HDMI, USB, and BT cnct.",
+          "corrected": "My new TV has High-Definition Multimedia Interface, Universal Serial Bus, and Bluetooth connectivity.",
+          "references": [
+            "My new TV has High-Definition Multimedia Interface, Universal Serial Bus, and Bluetooth connectivity."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1728,
+          "error_type": "Abbreviation Errors",
+          "original": "The pkg was del'd by USPS, not UPS.",
+          "corrected": "The package was delivered by United States Postal Service, not United Parcel Service.",
+          "references": [
+            "The package was delivered by United States Postal Service, not United Parcel Service."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1734,
+          "error_type": "Abbreviation Errors",
+          "original": "My fav band is playing at SXSW this yr.",
+          "corrected": "My favorite band is playing at South by Southwest this year.",
+          "references": [
+            "My favorite band is playing at South by Southwest this year."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1754,
+          "error_type": "Abbreviation Errors",
+          "original": "The team is focusing on R&D for the proj.",
+          "corrected": "The team is focusing on research and development for the project.",
+          "references": [
+            "The team is focusing on research and development for the project."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1098,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "This recipe is most simpler than the other one.",
+          "corrected": "This recipe is simpler than the other one.",
+          "references": [
+            "This recipe is simpler than the other one."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1103,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "The roller coaster was the most scariest I've ever been on.",
+          "corrected": "The roller coaster was the scariest I've ever been on.",
+          "references": [
+            "The roller coaster was the scariest I've ever been on."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1116,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "This is the most more affordable option for us.",
+          "corrected": "This is the more affordable option for us.",
+          "references": [
+            "This is the more affordable option for us."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1119,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "The most easiest way to learn is by doing.",
+          "corrected": "The easiest way to learn is by doing.",
+          "references": [
+            "The easiest way to learn is by doing."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        },
+        {
+          "serial_number": 1120,
+          "error_type": "Agreement in Comparative and Superlative Forms",
+          "original": "The most highest mountain in the world is Mount Everest.",
+          "corrected": "The highest mountain in the world is Mount Everest.",
+          "references": [
+            "The highest mountain in the world is Mount Everest."
+          ],
+          "source": "grammar_correction.csv",
+          "split": "validation"
+        }
+      ]
+    },
+    {
+      "path": "data/prompt_registry.json",
+      "size_bytes": 1462,
+      "examples": 3,
+      "classification": "support-metadata",
+      "columns": [
+        "version_id",
+        "template",
+        "description",
+        "created_at",
+        "metrics",
+        "is_active"
+      ],
+      "dtypes": {
+        "version_id": "str",
+        "template": "str",
+        "description": "str",
+        "created_at": "str",
+        "metrics": "dict",
+        "is_active": "bool"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [
+        "version_id"
+      ],
+      "sample_rows": [
+        {
+          "version_id": "v1.0.0",
+          "template": "Correct the following English sentence.\nSentence: {input}\nReturn only the corrected sentence.",
+          "description": "Simple correction prompt with no external context.",
+          "created_at": "2026-05-25T00:00:00+00:00",
+          "metrics": {
+            "gleu": 0.61,
+            "exact_match": 0.52
+          },
+          "is_active": false
+        },
+        {
+          "version_id": "v1.1.0",
+          "template": "Use the grammar guidance below to correct the sentence.\nContext:\n{context}\n\nSentence: {input}\nReturn only the corrected sentence.",
+          "description": "Context-augmented prompt for RAG-assisted correction.",
+          "created_at": "2026-05-25T00:00:01+00:00",
+          "metrics": {
+            "gleu": 0.68,
+            "exact_match": 0.58
+          },
+          "is_active": true
+        },
+        {
+          "version_id": "v2.0.0",
+          "template": "Identify the error type, reason briefly, and then provide the corrected sentence.\nContext:\n{context}\n\nSentence: {input}",
+          "description": "Chain-of-thought style prompt with error type identification.",
+          "created_at": "2026-05-25T00:00:02+00:00",
+          "metrics": {
+            "gleu": 0.7,
+            "exact_match": 0.6
+          },
+          "is_active": false
+        }
+      ]
+    },
+    {
+      "path": "data/raw/grammar_correction.csv",
+      "size_bytes": 254751,
+      "examples": 2018,
+      "classification": "primary-dataset",
+      "columns": [
+        "Serial Number",
+        "Error Type",
+        "Ungrammatical Statement",
+        "Standard English"
+      ],
+      "dtypes": {
+        "Serial Number": "int64",
+        "Error Type": "object",
+        "Ungrammatical Statement": "object",
+        "Standard English": "object"
+      },
+      "input_column": "Ungrammatical Statement",
+      "corrected_column": "Standard English",
+      "label_columns": [],
+      "metadata_columns": [
+        "Serial Number"
+      ],
+      "sample_rows": [
+        {
+          "Serial Number": 1,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "I goes to the store everyday.",
+          "Standard English": "I go to the store everyday."
+        },
+        {
+          "Serial Number": 2,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "They was playing soccer last night.",
+          "Standard English": "They were playing soccer last night."
+        },
+        {
+          "Serial Number": 3,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "She have completed her homework.",
+          "Standard English": "She has completed her homework."
+        },
+        {
+          "Serial Number": 4,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "He don't know the answer.",
+          "Standard English": "He doesn't know the answer."
+        },
+        {
+          "Serial Number": 5,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "The sun rise in the east.",
+          "Standard English": "The sun rises in the east."
+        },
+        {
+          "Serial Number": 6,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "I am eat pizza for lunch.",
+          "Standard English": "I am eating pizza for lunch."
+        },
+        {
+          "Serial Number": 7,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "The students studies for the exam.",
+          "Standard English": "The students study for the exam."
+        },
+        {
+          "Serial Number": 8,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "The car need to be repaired.",
+          "Standard English": "The car needs to be repaired."
+        },
+        {
+          "Serial Number": 9,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "She will goes to the party tonight.",
+          "Standard English": "She will go to the party tonight."
+        },
+        {
+          "Serial Number": 10,
+          "Error Type": "Verb Tense Errors",
+          "Ungrammatical Statement": "They watches the movie together.",
+          "Standard English": "They watch the movie together."
+        }
+      ]
+    },
+    {
+      "path": "data/raw/manifest.json",
+      "size_bytes": 414,
+      "examples": null,
+      "classification": "support-metadata",
+      "columns": [
+        "generated_at",
+        "files"
+      ],
+      "dtypes": {
+        "generated_at": "str",
+        "files": "list"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [],
+      "sample_rows": [
+        {
+          "generated_at": "2026-05-26T00:51:27.350978Z",
+          "files": [
+            {
+              "path": "data/raw/grammar_correction.csv",
+              "size_bytes": 254751,
+              "sha256": "2dc565c3b993c0a1a04cacf2c73e35b03886cfb26771fb8fcb03a1df8542950a",
+              "rows": 2018,
+              "columns": [
+                "Serial Number",
+                "Error Type",
+                "Ungrammatical Statement",
+                "Standard English"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "data/sample/grammar_rules.txt",
+      "size_bytes": 3239,
+      "examples": 30,
+      "classification": "support-text",
+      "columns": [
+        "line"
+      ],
+      "dtypes": {
+        "line": "str"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [],
+      "sample_rows": [
+        {
+          "line": "Subject-verb agreement rule 1: A singular subject normally takes a singular verb in the present tense."
+        },
+        {
+          "line": "Subject-verb agreement rule 2: A plural subject normally takes a plural verb in the present tense."
+        },
+        {
+          "line": "Subject-verb agreement rule 3: Collective nouns may take singular verbs when the group acts as one unit."
+        },
+        {
+          "line": "Subject-verb agreement rule 4: When subjects are joined by \"and,\" use a plural verb unless the phrase names one idea."
+        },
+        {
+          "line": "Subject-verb agreement rule 5: When subjects are joined by \"or\" or \"nor,\" match the verb to the nearer subject."
+        },
+        {
+          "line": "Subject-verb agreement rule 6: Indefinite pronouns such as everyone, each, and somebody usually take singular verbs."
+        },
+        {
+          "line": "Subject-verb agreement rule 7: Phrases between the subject and verb do not change the verb form."
+        },
+        {
+          "line": "Subject-verb agreement rule 8: Titles of books, movies, or organizations usually take singular verbs."
+        },
+        {
+          "line": "Subject-verb agreement rule 9: Amounts of time, money, or distance treated as a unit usually take singular verbs."
+        },
+        {
+          "line": "Subject-verb agreement rule 10: In there-is and there-are constructions, choose the verb based on the real subject that follows."
+        }
+      ]
+    },
+    {
+      "path": "data/sample/sample_sentences.txt",
+      "size_bytes": 1912,
+      "examples": 20,
+      "classification": "support-text",
+      "columns": [
+        "line"
+      ],
+      "dtypes": {
+        "line": "str"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [],
+      "sample_rows": [
+        {
+          "line": "She walk to school every morning."
+        },
+        {
+          "line": "The dogs barks at every stranger."
+        },
+        {
+          "line": "My brother and sister is coming tonight."
+        },
+        {
+          "line": "The list of items are on the desk."
+        },
+        {
+          "line": "Each student need a notebook for class."
+        },
+        {
+          "line": "He bought a umbrella before the storm."
+        },
+        {
+          "line": "She is best player on the team."
+        },
+        {
+          "line": "I saw an university near the station."
+        },
+        {
+          "line": "They adopted cat from shelter downtown."
+        },
+        {
+          "line": "We stayed at a old hotel by river."
+        }
+      ]
+    },
+    {
+      "path": "data/vector_store/chunks.json",
+      "size_bytes": 5552,
+      "examples": 30,
+      "classification": "support-artifact",
+      "columns": [
+        "chunk_id",
+        "text",
+        "source"
+      ],
+      "dtypes": {
+        "chunk_id": "int",
+        "text": "str",
+        "source": "str"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [
+        "chunk_id",
+        "source"
+      ],
+      "sample_rows": [
+        {
+          "chunk_id": 0,
+          "text": "Subject-verb agreement rule 1: A singular subject normally takes a singular verb in the present tense.",
+          "source": "document_0"
+        },
+        {
+          "chunk_id": 1,
+          "text": "Subject-verb agreement rule 2: A plural subject normally takes a plural verb in the present tense.",
+          "source": "document_1"
+        },
+        {
+          "chunk_id": 2,
+          "text": "Subject-verb agreement rule 3: Collective nouns may take singular verbs when the group acts as one unit.",
+          "source": "document_2"
+        },
+        {
+          "chunk_id": 3,
+          "text": "Subject-verb agreement rule 4: When subjects are joined by \"and,\" use a plural verb unless the phrase names one idea.",
+          "source": "document_3"
+        },
+        {
+          "chunk_id": 4,
+          "text": "Subject-verb agreement rule 5: When subjects are joined by \"or\" or \"nor,\" match the verb to the nearer subject.",
+          "source": "document_4"
+        },
+        {
+          "chunk_id": 5,
+          "text": "Subject-verb agreement rule 6: Indefinite pronouns such as everyone, each, and somebody usually take singular verbs.",
+          "source": "document_5"
+        },
+        {
+          "chunk_id": 6,
+          "text": "Subject-verb agreement rule 7: Phrases between the subject and verb do not change the verb form.",
+          "source": "document_6"
+        },
+        {
+          "chunk_id": 7,
+          "text": "Subject-verb agreement rule 8: Titles of books, movies, or organizations usually take singular verbs.",
+          "source": "document_7"
+        },
+        {
+          "chunk_id": 8,
+          "text": "Subject-verb agreement rule 9: Amounts of time, money, or distance treated as a unit usually take singular verbs.",
+          "source": "document_8"
+        },
+        {
+          "chunk_id": 9,
+          "text": "Subject-verb agreement rule 10: In there-is and there-are constructions, choose the verb based on the real subject that follows.",
+          "source": "document_9"
+        }
+      ]
+    },
+    {
+      "path": "data/vector_store/metadata.json",
+      "size_bytes": 186,
+      "examples": null,
+      "classification": "support-artifact",
+      "columns": [
+        "backend",
+        "embedding_model",
+        "chunk_size",
+        "chunk_overlap",
+        "chunk_count",
+        "vector_dimension"
+      ],
+      "dtypes": {
+        "backend": "str",
+        "embedding_model": "str",
+        "chunk_size": "int",
+        "chunk_overlap": "int",
+        "chunk_count": "int",
+        "vector_dimension": "int"
+      },
+      "input_column": null,
+      "corrected_column": null,
+      "label_columns": [],
+      "metadata_columns": [],
+      "sample_rows": [
+        {
+          "backend": "numpy",
+          "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+          "chunk_size": 512,
+          "chunk_overlap": 50,
+          "chunk_count": 30,
+          "vector_dimension": 128
+        }
+      ]
+    }
+  ],
+  "primary_dataset": {
+    "path": "data/processed/grammar_correction_full.jsonl",
+    "rows": 2018,
+    "input_column": "original",
+    "corrected_column": "corrected",
+    "label_columns": [
+      "error_type"
+    ],
+    "metadata_columns": [
+      "serial_number",
+      "source"
+    ],
+    "columns": [
+      "serial_number",
+      "error_type",
+      "original",
+      "corrected",
+      "references",
+      "source"
+    ],
+    "dtypes": {
+      "serial_number": "int64",
+      "error_type": "object",
+      "original": "object",
+      "corrected": "object",
+      "references": "object",
+      "source": "object"
+    },
+    "sample_rows": [
+      {
+        "serial_number": 1,
+        "error_type": "Verb Tense Errors",
+        "original": "I goes to the store everyday.",
+        "corrected": "I go to the store everyday.",
+        "references": [
+          "I go to the store everyday."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 2,
+        "error_type": "Verb Tense Errors",
+        "original": "They was playing soccer last night.",
+        "corrected": "They were playing soccer last night.",
+        "references": [
+          "They were playing soccer last night."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 3,
+        "error_type": "Verb Tense Errors",
+        "original": "She have completed her homework.",
+        "corrected": "She has completed her homework.",
+        "references": [
+          "She has completed her homework."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 4,
+        "error_type": "Verb Tense Errors",
+        "original": "He don't know the answer.",
+        "corrected": "He doesn't know the answer.",
+        "references": [
+          "He doesn't know the answer."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 5,
+        "error_type": "Verb Tense Errors",
+        "original": "The sun rise in the east.",
+        "corrected": "The sun rises in the east.",
+        "references": [
+          "The sun rises in the east."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 6,
+        "error_type": "Verb Tense Errors",
+        "original": "I am eat pizza for lunch.",
+        "corrected": "I am eating pizza for lunch.",
+        "references": [
+          "I am eating pizza for lunch."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 7,
+        "error_type": "Verb Tense Errors",
+        "original": "The students studies for the exam.",
+        "corrected": "The students study for the exam.",
+        "references": [
+          "The students study for the exam."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 8,
+        "error_type": "Verb Tense Errors",
+        "original": "The car need to be repaired.",
+        "corrected": "The car needs to be repaired.",
+        "references": [
+          "The car needs to be repaired."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 9,
+        "error_type": "Verb Tense Errors",
+        "original": "She will goes to the party tonight.",
+        "corrected": "She will go to the party tonight.",
+        "references": [
+          "She will go to the party tonight."
+        ],
+        "source": "grammar_correction.csv"
+      },
+      {
+        "serial_number": 10,
+        "error_type": "Verb Tense Errors",
+        "original": "They watches the movie together.",
+        "corrected": "They watch the movie together.",
+        "references": [
+          "They watch the movie together."
+        ],
+        "source": "grammar_correction.csv"
+      }
+    ]
+  },
+  "split_distribution": {
+    "train": {
+      "rows": 1612,
+      "percentage": 79.88
+    },
+    "validation": {
+      "rows": 204,
+      "percentage": 10.11
+    },
+    "test": {
+      "rows": 202,
+      "percentage": 10.01
+    }
+  },
+  "explicit_error_type_distribution": {
+    "Sentence Structure Errors": {
+      "count": 103,
+      "percentage": 5.1
+    },
+    "Verb Tense Errors": {
+      "count": 100,
+      "percentage": 4.96
+    },
+    "Article Usage": {
+      "count": 100,
+      "percentage": 4.96
+    },
+    "Subject-Verb Agreement": {
+      "count": 100,
+      "percentage": 4.96
+    },
+    "Spelling Mistakes": {
+      "count": 100,
+      "percentage": 4.96
+    },
+    "Preposition Usage": {
+      "count": 95,
+      "percentage": 4.71
+    },
+    "Punctuation Errors": {
+      "count": 60,
+      "percentage": 2.97
+    },
+    "Relative Clause Errors": {
+      "count": 51,
+      "percentage": 2.53
+    },
+    "Ambiguity": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Negation Errors": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Tautology": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Mixed Metaphors/Idioms": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Incorrect Auxiliaries": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Slang, Jargon, and Colloquialisms": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Gerund and Participle Errors": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Abbreviation Errors": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Lack of Parallelism in Lists or Series": {
+      "count": 50,
+      "percentage": 2.48
+    },
+    "Agreement in Comparative and Superlative Forms": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Passive Voice Overuse": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Conjunction Misuse": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Parallelism Errors": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Faulty Comparisons": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Inappropriate Register": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Mixed Conditionals": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Ellipsis Errors": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Contractions Errors": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Infinitive Errors": {
+      "count": 49,
+      "percentage": 2.43
+    },
+    "Quantifier Errors": {
+      "count": 48,
+      "percentage": 2.38
+    },
+    "Clichés": {
+      "count": 48,
+      "percentage": 2.38
+    },
+    "Pronoun Errors": {
+      "count": 47,
+      "percentage": 2.33
+    },
+    "Modifiers Misplacement": {
+      "count": 46,
+      "percentage": 2.28
+    },
+    "Capitalization Errors": {
+      "count": 40,
+      "percentage": 1.98
+    },
+    "Sentence Fragments": {
+      "count": 40,
+      "percentage": 1.98
+    },
+    "Word Choice/Usage": {
+      "count": 40,
+      "percentage": 1.98
+    },
+    "Run-on Sentences": {
+      "count": 40,
+      "percentage": 1.98
+    },
+    "Redundancy/Repetition": {
+      "count": 20,
+      "percentage": 0.99
+    }
+  },
+  "error_bucket_distribution": {
+    "mixed/multiple": {
+      "count": 569,
+      "percentage": 28.2
+    },
+    "preposition": {
+      "count": 297,
+      "percentage": 14.72
+    },
+    "article": {
+      "count": 290,
+      "percentage": 14.37
+    },
+    "spelling": {
+      "count": 276,
+      "percentage": 13.68
+    },
+    "tense": {
+      "count": 248,
+      "percentage": 12.29
+    },
+    "punctuation": {
+      "count": 190,
+      "percentage": 9.42
+    },
+    "subject-verb agreement": {
+      "count": 108,
+      "percentage": 5.35
+    },
+    "capitalization": {
+      "count": 40,
+      "percentage": 1.98
+    }
+  },
+  "imbalance": {
+    "largest_label": "Sentence Structure Errors",
+    "largest_label_share": 5.1,
+    "smallest_label": "Redundancy/Repetition",
+    "smallest_label_share": 0.99,
+    "largest_bucket": "mixed/multiple",
+    "largest_bucket_share": 28.2,
+    "smallest_bucket": "capitalization",
+    "smallest_bucket_share": 1.98
+  },
+  "length_stats": {
+    "original": {
+      "mean": 9.019,
+      "median": 9.0,
+      "min": 3,
+      "max": 22,
+      "p95": 14.0,
+      "std": 2.53
+    },
+    "corrected": {
+      "mean": 8.762,
+      "median": 9.0,
+      "min": 2,
+      "max": 18,
+      "p95": 13.0,
+      "std": 2.288
+    }
+  },
+  "vocabulary": {
+    "token_count": 17682,
+    "vocabulary_size": 3179,
+    "type_token_ratio": 0.1798
+  },
+  "top_tokens": [
+    {
+      "token": "new",
+      "count": 92
+    },
+    {
+      "token": "than",
+      "count": 80
+    },
+    {
+      "token": "if",
+      "count": 56
+    },
+    {
+      "token": "store",
+      "count": 51
+    },
+    {
+      "token": "book",
+      "count": 51
+    },
+    {
+      "token": "very",
+      "count": 46
+    },
+    {
+      "token": "more",
+      "count": 46
+    },
+    {
+      "token": "car",
+      "count": 45
+    },
+    {
+      "token": "work",
+      "count": 44
+    },
+    {
+      "token": "will",
+      "count": 43
+    },
+    {
+      "token": "not",
+      "count": 42
+    },
+    {
+      "token": "students",
+      "count": 41
+    },
+    {
+      "token": "movie",
+      "count": 41
+    },
+    {
+      "token": "any",
+      "count": 41
+    },
+    {
+      "token": "cake",
+      "count": 38
+    },
+    {
+      "token": "went",
+      "count": 38
+    },
+    {
+      "token": "need",
+      "count": 37
+    },
+    {
+      "token": "project",
+      "count": 36
+    },
+    {
+      "token": "about",
+      "count": 36
+    },
+    {
+      "token": "meeting",
+      "count": 35
+    }
+  ],
+  "correction_patterns": {
+    "structural-rewrite": {
+      "count": 391,
+      "percentage": 19.38
+    },
+    "lexical-substitution": {
+      "count": 364,
+      "percentage": 18.04
+    },
+    "single-token-replacement": {
+      "count": 330,
+      "percentage": 16.35
+    },
+    "deletion": {
+      "count": 315,
+      "percentage": 15.61
+    },
+    "insertion": {
+      "count": 172,
+      "percentage": 8.52
+    },
+    "multi-token-rewrite": {
+      "count": 157,
+      "percentage": 7.78
+    },
+    "punctuation-only": {
+      "count": 99,
+      "percentage": 4.91
+    },
+    "abbreviation-expansion": {
+      "count": 82,
+      "percentage": 4.06
+    },
+    "unchanged": {
+      "count": 68,
+      "percentage": 3.37
+    },
+    "casing-only": {
+      "count": 40,
+      "percentage": 1.98
+    }
+  },
+  "duplicates": {
+    "exact_original_duplicates": 3,
+    "exact_pair_duplicates": 3,
+    "near_duplicate_pairs": [
+      {
+        "serial_a": 15,
+        "serial_b": 1484,
+        "error_type_a": "Verb Tense Errors",
+        "error_type_b": "Incorrect Auxiliaries",
+        "original_a": "The computer not working properly.",
+        "original_b": "The computer be not working properly.",
+        "similarity": 0.957
+      },
+      {
+        "serial_a": 208,
+        "serial_b": 624,
+        "error_type_a": "Article Usage",
+        "error_type_b": "Punctuation Errors",
+        "original_a": "The Earth revolves around a Sun.",
+        "original_b": "The Earth, revolves around the Sun.",
+        "similarity": 0.938
+      },
+      {
+        "serial_a": 220,
+        "serial_b": 304,
+        "error_type_a": "Article Usage",
+        "error_type_b": "Preposition Usage",
+        "original_a": "The cat is hiding under a table.",
+        "original_b": "The cat is hiding under the table.",
+        "similarity": 0.938
+      },
+      {
+        "serial_a": 350,
+        "serial_b": 394,
+        "error_type_a": "Preposition Usage",
+        "error_type_b": "Preposition Usage",
+        "original_a": "The car is parked in front the house.",
+        "original_b": "The car is parked in front of the house.",
+        "similarity": 0.96
+      },
+      {
+        "serial_a": 425,
+        "serial_b": 638,
+        "error_type_a": "Sentence Structure Errors",
+        "error_type_b": "Punctuation Errors",
+        "original_a": "I can't finds my keys, have you seen them?",
+        "original_b": "I can't find my keys have you seen them?",
+        "similarity": 0.987
+      },
+      {
+        "serial_a": 679,
+        "serial_b": 993,
+        "error_type_a": "Capitalization Errors",
+        "error_type_b": "Conjunction Misuse",
+        "original_a": "she is a doctor and he is a lawyer.",
+        "original_b": "She is a doctor, and she is a lawyer.",
+        "similarity": 0.986
+      }
+    ],
+    "near_duplicate_pair_count": 6
+  },
+  "quality_issues": {
+    "rows": 2018,
+    "empty_original_rows": 0,
+    "empty_corrected_rows": 0,
+    "same_original_corrected_rows": 68,
+    "malformed_reference_rows": 0,
+    "control_character_rows": 0,
+    "unicode_suspicious_rows": 0,
+    "suspicious_label_rows": 0,
+    "noisy_row_count": 70,
+    "noisy_examples": [
+      {
+        "serial_number": 29,
+        "error_type": "Verb Tense Errors",
+        "original": "He will finish the race in an hour.",
+        "corrected": "He will finish the race in an hour.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 226,
+        "error_type": "Article Usage",
+        "original": "The movie is based on a true story.",
+        "corrected": "The movie is based on a true story.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 234,
+        "error_type": "Article Usage",
+        "original": "The boy is playing with a toy car.",
+        "corrected": "The boy is playing with a toy car.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 242,
+        "error_type": "Article Usage",
+        "original": "The athlete is training for a marathon race.",
+        "corrected": "The athlete is training for a marathon race.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 420,
+        "error_type": "Sentence Structure Errors",
+        "original": "We played soccer and basketball at the park yesterday.",
+        "corrected": "We played soccer and basketball at the park yesterday.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 447,
+        "error_type": "Sentence Structure Errors",
+        "original": "The chef cooked a delicious meal for the guests.",
+        "corrected": "The chef cooked a delicious meal for the guests.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 448,
+        "error_type": "Sentence Structure Errors",
+        "original": "After much thought, he decided to buy a new car.",
+        "corrected": "After much thought, he decided to buy a new car.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 454,
+        "error_type": "Sentence Structure Errors",
+        "original": "The cat chased after the bird, but it got away.",
+        "corrected": "The cat chased after the bird, but it got away.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 456,
+        "error_type": "Sentence Structure Errors",
+        "original": "She has a beautiful singing voice and sings often.",
+        "corrected": "She has a beautiful singing voice and sings often.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 461,
+        "error_type": "Sentence Structure Errors",
+        "original": "The cake needs to be frosted after it cools down.",
+        "corrected": "The cake needs to be frosted after it cools down.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 463,
+        "error_type": "Sentence Structure Errors",
+        "original": "We were surprised when she showed up at the party.",
+        "corrected": "We were surprised when she showed up at the party.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 464,
+        "error_type": "Sentence Structure Errors",
+        "original": "The baby was crying because it was hungry and tired.",
+        "corrected": "The baby was crying because it was hungry and tired.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 466,
+        "error_type": "Sentence Structure Errors",
+        "original": "The sun sets in the west and rises in the east.",
+        "corrected": "The sun sets in the west and rises in the east.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 471,
+        "error_type": "Sentence Structure Errors",
+        "original": "The dog chased the squirrels in the park yesterday.",
+        "corrected": "The dog chased the squirrels in the park yesterday.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 472,
+        "error_type": "Sentence Structure Errors",
+        "original": "The flowers in the garden are blooming beautifully.",
+        "corrected": "The flowers in the garden are blooming beautifully.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 474,
+        "error_type": "Sentence Structure Errors",
+        "original": "They visited their grandparents on the weekend.",
+        "corrected": "They visited their grandparents on the weekend.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 475,
+        "error_type": "Sentence Structure Errors",
+        "original": "The cake was delicious, but it was too sweet.",
+        "corrected": "The cake was delicious, but it was too sweet.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 478,
+        "error_type": "Sentence Structure Errors",
+        "original": "He was late to work because he missed his bus.",
+        "corrected": "He was late to work because he missed his bus.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 479,
+        "error_type": "Sentence Structure Errors",
+        "original": "The ice cream truck comes to our neighborhood often.",
+        "corrected": "The ice cream truck comes to our neighborhood often.",
+        "reasons": [
+          "no correction delta"
+        ]
+      },
+      {
+        "serial_number": 480,
+        "error_type": "Sentence Structure Errors",
+        "original": "The computer is very slow and needs to be fixed.",
+        "corrected": "The computer is very slow and needs to be fixed.",
+        "reasons": [
+          "no correction delta"
+        ]
+      }
+    ]
+  },
+  "split_leakage": {
+    "train_vs_validation": {
+      "original_overlap": 1,
+      "pair_overlap": 1
+    },
+    "train_vs_test": {
+      "original_overlap": 0,
+      "pair_overlap": 0
+    },
+    "validation_vs_test": {
+      "original_overlap": 0,
+      "pair_overlap": 0
+    }
+  },
+  "bert_imbalance": {
+    "token_labels_available": false,
+    "approx_total_source_tokens": 18201,
+    "approx_error_tokens": 3929,
+    "approx_correct_tokens": 15291,
+    "approx_error_token_ratio": 0.2159,
+    "approx_correct_to_error_ratio": 3.892,
+    "top_changed_tokens": [
+      {
+        "token": "a",
+        "count": 194
+      },
+      {
+        "token": "the",
+        "count": 189
+      },
+      {
+        "token": "was",
+        "count": 130
+      },
+      {
+        "token": "to",
+        "count": 93
+      },
+      {
+        "token": "but",
+        "count": 88
+      },
+      {
+        "token": "of",
+        "count": 77
+      },
+      {
+        "token": "is",
+        "count": 75
+      },
+      {
+        "token": "and",
+        "count": 75
+      },
+      {
+        "token": "it",
+        "count": 73
+      },
+      {
+        "token": "by",
+        "count": 60
+      },
+      {
+        "token": "it's",
+        "count": 53
+      },
+      {
+        "token": "with",
+        "count": 52
+      },
+      {
+        "token": "in",
+        "count": 51
+      },
+      {
+        "token": "most",
+        "count": 45
+      },
+      {
+        "token": "on",
+        "count": 40
+      }
+    ]
+  },
+  "quality": {
+    "cleanliness_score": 99.22,
+    "training_readiness": "Moderate",
+    "components": {
+      "missing_rate": 0.0,
+      "malformed_rate": 0.0,
+      "control_character_rate": 0.0,
+      "label_issue_rate": 0.0,
+      "duplicate_rate": 0.0015,
+      "near_duplicate_rate": 0.003,
+      "noisy_rate": 0.0347,
+      "split_leakage_rate": 0.0005
+    }
+  },
+  "bias": {
+    "gender_pronouns": {
+      "male": 272,
+      "female": 330,
+      "neutral": 144
+    },
+    "profession_bias": [
+      {
+        "profession": "doctor",
+        "male": 6,
+        "female": 6,
+        "neutral": 0,
+        "total": 12
+      },
+      {
+        "profession": "teacher",
+        "male": 4,
+        "female": 1,
+        "neutral": 4,
+        "total": 9
+      },
+      {
+        "profession": "manager",
+        "male": 2,
+        "female": 1,
+        "neutral": 3,
+        "total": 6
+      },
+      {
+        "profession": "lawyer",
+        "male": 2,
+        "female": 2,
+        "neutral": 0,
+        "total": 4
+      },
+      {
+        "profession": "scientist",
+        "male": 2,
+        "female": 0,
+        "neutral": 2,
+        "total": 4
+      },
+      {
+        "profession": "police",
+        "male": 1,
+        "female": 0,
+        "neutral": 0,
+        "total": 1
+      },
+      {
+        "profession": "assistant",
+        "male": 1,
+        "female": 0,
+        "neutral": 0,
+        "total": 1
+      },
+      {
+        "profession": "nurse",
+        "male": 0,
+        "female": 1,
+        "neutral": 0,
+        "total": 1
+      },
+      {
+        "profession": "officer",
+        "male": 1,
+        "female": 0,
+        "neutral": 0,
+        "total": 1
+      },
+      {
+        "profession": "student",
+        "male": 0,
+        "female": 1,
+        "neutral": 0,
+        "total": 1
+      },
+      {
+        "profession": "chef",
+        "male": 0,
+        "female": 0,
+        "neutral": 1,
+        "total": 1
+      },
+      {
+        "profession": "engineer",
+        "male": 0,
+        "female": 0,
+        "neutral": 1,
+        "total": 1
+      }
+    ],
+    "dominant_pronoun_group": "female",
+    "dominant_correction_pattern": "structural-rewrite",
+    "duplicate_risk": "moderate",
+    "length_bias_risk": "low"
+  },
+  "recommendation_block": {
+    "strengths": [
+      "The corpus already contains paired ungrammatical and corrected sentences, which is directly usable for sequence-to-sequence training.",
+      "The dataset includes explicit high-level error_type labels, which makes targeted analysis and curriculum design possible.",
+      "Train, validation, and test splits are present and sized sensibly for a 2,018-example corpus.",
+      "Text cleanliness is high, with essentially no empty rows, control characters, or split leakage."
+    ],
+    "weaknesses": [
+      "The dataset is small for fine-tuning large grammar-correction models, especially for T5.",
+      "Many examples belong to niche or stylistic categories rather than core grammar categories, which can dilute signal for sentence-level correction.",
+      "Token-level ERROR labels are not explicitly provided, so BERT detection targets must be weakly inferred from diffs."
+    ],
+    "risks": [
+      "Overfitting is likely if T5 is trained only on this 2,018-row corpus without augmentation or external data.",
+      "Weakly inferred token labels can make the BERT detector under-calibrated and class-imbalanced.",
+      "Abbreviation, style, and structural rewrite examples may encourage broader rewriting instead of minimal grammar edits."
+    ]
+  },
+  "recommendations": {
+    "oversampling_needed": true,
+    "augmentation_needed": true,
+    "recommendations": [
+      "Use weighted cross-entropy for BERT token detection to offset the dominant CORRECT token class.",
+      "Keep the current train/validation/test split, because no material pair leakage was detected.",
+      "Consider oversampling core grammar categories such as article, punctuation, capitalization, and preposition errors if those are product priorities.",
+      "Add external grammar-correction corpora such as JFLEG and CoNLL-2014 before serious T5 fine-tuning.",
+      "Augment with synthetic perturbations or back-translation if you want stronger T5 generalization from this small corpus."
+    ],
+    "expected_t5_accuracy_impact": "With only the current corpus, T5 is more likely to memorize recurring correction templates than to generalize broadly. Adding JFLEG or CoNLL-style data should materially improve robustness and likely raise downstream accuracy."
+  }
+}
