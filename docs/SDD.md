@@ -49,6 +49,44 @@ Raw text or batched text samples.
 Outputs:
 Corrected text strings and training/evaluation metadata.
 
+Class design:
+
+```text
+T5GrammarCorrector
+├─ load_model()
+├─ preprocess(texts)
+├─ correct(text)
+├─ correct_batch(texts)
+├─ fine_tune(train_dataset, val_dataset, output_dir)
+├─ save(output_dir)
+└─ from_pretrained(model_dir)
+```
+
+Method and data flow:
+
+```text
+Input texts
+   |
+   v
+GrammarPreprocessor.clean_text
+   |
+   v
+"grammar: " prefix
+   |
+   v
+T5Tokenizer
+   |
+   v
+T5ForConditionalGeneration
+   |
+   +--> generate() for inference
+   |
+   +--> Trainer/DataCollatorForSeq2Seq for fine-tuning
+   |
+   v
+Decoded corrected text
+```
+
 ### 2.2 BERT Detector Module
 
 Purpose:
@@ -66,6 +104,48 @@ Raw text strings.
 Outputs:
 Structured error spans and boolean error signals.
 
+Class design:
+
+```text
+BERTGrammarDetector
+├─ load_model()
+├─ detect_errors(text)
+├─ detect_batch(texts)
+├─ has_errors(text)
+├─ get_error_positions(text)
+├─ fine_tune(train_dataset, val_dataset, output_dir)
+├─ save(output_dir)
+└─ from_pretrained(model_dir)
+
+ErrorSpan
+├─ start
+├─ end
+├─ token
+├─ confidence
+└─ error_type
+```
+
+Error detection pipeline:
+
+```text
+Input text
+   |
+   v
+BertTokenizerFast with offsets
+   |
+   v
+BertForTokenClassification
+   |
+   v
+Per-token logits
+   |
+   v
+Softmax + thresholding
+   |
+   v
+ErrorSpan(start, end, token, confidence)
+```
+
 ### 2.3 RNN Baseline Module
 
 Purpose:
@@ -82,6 +162,35 @@ Tokenized or raw training text pairs.
 
 Outputs:
 Baseline corrected sequences and loss metrics.
+
+Architecture diagram:
+
+```text
+Source Tokens
+   |
+   v
+Embedding Layer
+   |
+   v
+Bidirectional LSTM Encoder
+   |
+   v
+Bahdanau Attention <---- Decoder Hidden State
+   |                           ^
+   v                           |
+Context Vector ----> LSTM Decoder ----> Vocabulary Projection
+                                 |
+                                 v
+                         Greedy Token Output
+```
+
+Component roles:
+
+- `Encoder`: embeds source tokens and encodes them with a bidirectional LSTM.
+- `Attention`: scores encoder outputs against the current decoder state.
+- `Decoder`: consumes previous target tokens and attended context to predict the next token.
+- `RNNSeq2Seq`: orchestrates teacher forcing and end-to-end decoding.
+- `RNNGrammarCorrector`: manages vocabulary, text encoding/decoding, and checkpointing.
 
 ### 2.4 RAG Pipeline Module
 
@@ -197,6 +306,27 @@ Output Guardrails
    |
    v
 API/UI Response
+```
+
+Model training flow:
+
+```text
+Processed JSONL dataset
+   |
+   +--> T5 fine-tuning script
+   |      |
+   |      v
+   |   Tokenization -> Trainer -> Checkpoints -> Metrics JSON
+   |
+   +--> BERT training script
+   |      |
+   |      v
+   |   Synthetic token labels -> Trainer -> Checkpoints -> Metrics JSON
+   |
+   \--> Evaluation script
+          |
+          v
+     Test predictions -> Evaluator -> Markdown report
 ```
 
 ## 4. Database and Storage Design
