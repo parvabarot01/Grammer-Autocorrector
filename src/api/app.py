@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from src.api.routes import router
-from src.api.runtime import APIRuntime
+from src.pipeline import CorrectionPipeline
 from src.utils.config import load_config
 
 logging.basicConfig(
@@ -31,13 +31,12 @@ def create_app() -> FastAPI:
     async def lifespan(application: FastAPI):
         LOGGER.info("Starting Grammar Autocorrector API.")
         application.state.config = config
-        application.state.runtime = APIRuntime(application.state.config)
-        application.state.runtime.initialize()
+        application.state.pipeline = CorrectionPipeline(application.state.config)
+        application.state.pipeline.load_all()
         try:
             yield
         finally:
             LOGGER.info("Stopping Grammar Autocorrector API.")
-            application.state.runtime.shutdown()
 
     app = FastAPI(
         title="Grammar Autocorrector API",
@@ -59,7 +58,7 @@ def create_app() -> FastAPI:
     )
 
     app.state.config = config
-    app.state.runtime = APIRuntime(app.state.config)
+    app.state.pipeline = CorrectionPipeline(app.state.config)
 
     @app.middleware("http")
     async def request_id_middleware(request: Request, call_next):  # type: ignore[no-untyped-def]

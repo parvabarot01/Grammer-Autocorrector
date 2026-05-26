@@ -1,30 +1,47 @@
 # API Reference
 
 ## Overview
-The Grammar Autocorrector API exposes grammar correction, error detection, knowledge-base search, prompt management, and evaluation endpoints over HTTP.
+The Grammar Autocorrector API exposes correction, detection, prompt management,
+knowledge-base retrieval, evaluation, and benchmarking over HTTP.
 
 - Base URL: `http://localhost:8000`
 - OpenAPI docs: `http://localhost:8000/docs`
-- Authentication: None in v1
-- Rate limiting: Planned for v2 at `100 req/min per IP`
-- Versioning strategy: Pathless semantic versioning for v1 with backward-compatible additions; breaking changes will move to `/v2`
+- ReDoc: `http://localhost:8000/redoc`
+- Authentication: none in `v1.0.0`
+- Rate limiting: planned for `v2` at `100 req/min per IP`
+- Versioning strategy: backward-compatible additions remain on `v1`; breaking
+  changes will move to `/v2`
 
 ## Common Error Codes
 
 | Code | Meaning |
 |------|---------|
-| `400` | Request payload is syntactically valid but semantically invalid for the operation |
-| `422` | Guardrail validation blocked the request |
-| `500` | Internal service or model error |
+| `400` | Request payload is valid JSON but invalid for the requested operation |
+| `422` | Guardrails blocked the request |
+| `500` | Internal pipeline or service error |
+
+## Response Notes
+
+- `guardrail_report` contains the full input/output safety assessment returned
+  by the unified `CorrectionPipeline`.
+- `model_version` identifies the correction path used, such as
+  `heuristic-t5-fallback` or a loaded model checkpoint name.
+- `prompt_version` is populated for `rag` mode and for the active prompt used
+  in `auto` mode when retrieval is selected.
+- `request_id` is attached by middleware and mirrored in the response body for
+  single-item correction requests.
 
 ## GET `/health`
 
 - Purpose: readiness and model-load status
-- Response fields:
-  - `status`: service status string
-  - `models_loaded`: whether T5 and BERT loaded successfully
-  - `version`: API version
-  - `timestamp`: UTC timestamp
+- Response schema:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | `str` | Service state, usually `ok` |
+| `models_loaded` | `bool` | Whether pipeline models/resources are loaded |
+| `version` | `str` | API version |
+| `timestamp` | `str` | ISO 8601 UTC timestamp |
 
 ```bash
 curl http://localhost:8000/health
@@ -32,16 +49,20 @@ curl http://localhost:8000/health
 
 ```python
 import requests
+
 print(requests.get("http://localhost:8000/health", timeout=10).json())
 ```
 
 ## GET `/info`
 
 - Purpose: runtime metadata and supported capabilities
-- Response fields:
-  - `models`
-  - `prompt_version`
-  - `capabilities`
+- Response schema:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `models` | `list[str]` | Loaded component names |
+| `prompt_version` | `str` | Active prompt version |
+| `capabilities` | `list[str]` | Supported feature flags |
 
 ```bash
 curl http://localhost:8000/info
@@ -49,6 +70,7 @@ curl http://localhost:8000/info
 
 ```python
 import requests
+
 print(requests.get("http://localhost:8000/info", timeout=10).json())
 ```
 
@@ -63,7 +85,7 @@ print(requests.get("http://localhost:8000/info", timeout=10).json())
 | `mode` | `"t5" \| "rag" \| "auto"` | No | Default `auto` |
 | `num_beams` | `int` | No | Default `4`, range `1-8` |
 | `return_detected_errors` | `bool` | No | Default `false` |
-| `prompt_version` | `str` | No | Used in `rag` mode |
+| `prompt_version` | `str` | No | Optional prompt override |
 
 - Response schema:
 
@@ -75,6 +97,8 @@ print(requests.get("http://localhost:8000/info", timeout=10).json())
 | `errors_detected` | `list[ErrorSpan] \| null` |
 | `guardrail_report` | `FullGuardrailReport` |
 | `processing_time_ms` | `float` |
+| `model_version` | `str` |
+| `prompt_version` | `str` |
 | `request_id` | `str` |
 
 ```bash
@@ -119,6 +143,21 @@ print(response.json())
 | `total_processed` | `int` |
 | `processing_time_ms` | `float` |
 
+Each `BatchCorrectionItem` includes:
+
+| Field | Type |
+|-------|------|
+| `original` | `str` |
+| `corrected` | `str` |
+| `mode_used` | `str` |
+| `errors_detected` | `list[ErrorSpan] \| null` |
+| `guardrail_report` | `FullGuardrailReport \| null` |
+| `processing_time_ms` | `float` |
+| `status` | `str` |
+| `error_message` | `str \| null` |
+| `model_version` | `str` |
+| `prompt_version` | `str` |
+
 ```bash
 curl -X POST http://localhost:8000/correct/batch \
   -H "Content-Type: application/json" \
@@ -162,6 +201,7 @@ curl -X POST http://localhost:8000/detect \
 
 ```python
 import requests
+
 print(
     requests.post(
         "http://localhost:8000/detect",
@@ -195,6 +235,7 @@ curl -X POST http://localhost:8000/knowledge/add \
 
 ```python
 import requests
+
 print(
     requests.post(
         "http://localhost:8000/knowledge/add",
@@ -207,11 +248,11 @@ print(
 ## GET `/knowledge/search`
 
 - Purpose: retrieve grammar guidance from the RAG knowledge base
-- Query params:
+- Query parameters:
 
 | Name | Type | Required | Default |
 |------|------|----------|---------|
-| `query` | `str` | Yes | — |
+| `query` | `str` | Yes | - |
 | `top_k` | `int` | No | `5` |
 
 - Response schema:
@@ -227,6 +268,7 @@ curl "http://localhost:8000/knowledge/search?query=She%20go%20to%20school%20ever
 
 ```python
 import requests
+
 print(
     requests.get(
         "http://localhost:8000/knowledge/search",
@@ -252,17 +294,15 @@ curl http://localhost:8000/prompts
 
 ```python
 import requests
+
 print(requests.get("http://localhost:8000/prompts", timeout=10).json())
 ```
 
 ## GET `/prompts/{version_id}`
 
 - Purpose: fetch a specific prompt template and metadata
-- Path params:
-
-| Name | Type | Required |
-|------|------|----------|
-| `version_id` | `str` | Yes |
+- Path parameter: `version_id`
+- Response schema: `PromptVersion`
 
 ```bash
 curl http://localhost:8000/prompts/v1.1.0
@@ -270,18 +310,20 @@ curl http://localhost:8000/prompts/v1.1.0
 
 ```python
 import requests
+
 print(requests.get("http://localhost:8000/prompts/v1.1.0", timeout=10).json())
 ```
 
 ## POST `/prompts/{version_id}/promote`
 
-- Purpose: promote a prompt version to production
+- Purpose: promote a prompt to active production status
+- Path parameter: `version_id`
 - Response schema:
 
 | Field | Type |
 |-------|------|
 | `promoted` | `str` |
-| `previous` | `str` |
+| `previous` | `str \| null` |
 
 ```bash
 curl -X POST http://localhost:8000/prompts/v2.0.0/promote
@@ -289,12 +331,18 @@ curl -X POST http://localhost:8000/prompts/v2.0.0/promote
 
 ```python
 import requests
-print(requests.post("http://localhost:8000/prompts/v2.0.0/promote", timeout=10).json())
+
+print(
+    requests.post(
+        "http://localhost:8000/prompts/v2.0.0/promote",
+        timeout=10,
+    ).json()
+)
 ```
 
 ## POST `/prompts/rollback`
 
-- Purpose: restore the previous active prompt
+- Purpose: roll back to the previously active prompt version
 - Response schema:
 
 | Field | Type |
@@ -307,25 +355,26 @@ curl -X POST http://localhost:8000/prompts/rollback
 
 ```python
 import requests
+
 print(requests.post("http://localhost:8000/prompts/rollback", timeout=10).json())
 ```
 
 ## POST `/evaluate`
 
-- Purpose: score predictions against references
+- Purpose: compute offline metrics for predictions against references
 - Request schema:
 
-| Field | Type | Required |
-|-------|------|----------|
-| `predictions` | `list[str]` | Yes |
-| `references` | `list[str]` | Yes |
-| `metrics` | `list["gleu" \| "rouge" \| "exact_match"]` | Yes |
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `predictions` | `list[str]` | Yes | Must align with `references` |
+| `references` | `list[str]` | Yes | Single reference per prediction |
+| `metrics` | `list[str]` | Yes | Supported: `gleu`, `rouge`, `exact_match` |
 
 - Response schema:
 
 | Field | Type |
 |-------|------|
-| `metrics` | `dict` |
+| `metrics` | `dict[str, object]` |
 | `evaluated_pairs` | `int` |
 
 ```bash
@@ -345,34 +394,84 @@ payload = {
 print(requests.post("http://localhost:8000/evaluate", json=payload, timeout=30).json())
 ```
 
-## Schema Notes
+## POST `/benchmark`
+
+- Purpose: benchmark the full correction pipeline against labeled pairs
+- Request schema:
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `test_pairs` | `list[BenchmarkPair]` | Yes | Each item has `original` and `reference` |
+| `max_samples` | `int` | No | Optional cap on processed pairs |
+
+- Response schema:
+
+| Field | Type |
+|-------|------|
+| `gleu` | `float` |
+| `rouge` | `dict[str, float]` |
+| `exact_match` | `float` |
+| `avg_latency_ms` | `float` |
+| `p95_latency_ms` | `float` |
+| `failure_rate` | `float` |
+| `total_samples` | `int` |
+| `timestamp` | `str` |
+
+```bash
+curl -X POST http://localhost:8000/benchmark \
+  -H "Content-Type: application/json" \
+  -d "{\"test_pairs\":[{\"original\":\"She go to school everyday.\",\"reference\":\"She goes to school every day.\"}],\"max_samples\":1}"
+```
+
+```python
+import requests
+
+payload = {
+    "test_pairs": [
+        {
+            "original": "She go to school everyday.",
+            "reference": "She goes to school every day.",
+        }
+    ],
+    "max_samples": 1,
+}
+print(requests.post("http://localhost:8000/benchmark", json=payload, timeout=60).json())
+```
+
+## Data Model Snapshot
 
 ### `ErrorSpan`
 
-| Field | Type | Meaning |
-|-------|------|---------|
-| `start` | `int` | Start character offset |
-| `end` | `int` | End character offset |
-| `token` | `str` | Original token text |
-| `confidence` | `float` | Error-class confidence |
-| `error_type` | `str` | Error label |
+| Field | Type |
+|-------|------|
+| `start` | `int` |
+| `end` | `int` |
+| `token` | `str` |
+| `confidence` | `float` |
+| `error_type` | `str` |
 
-### `FullGuardrailReport`
+### `PromptVersion`
 
-| Field | Type | Meaning |
-|-------|------|---------|
-| `input_valid` | `GuardrailResult` | Input validation status |
-| `toxicity` | `ToxicityResult` | Keyword-based toxicity scan |
-| `bias` | `BiasResult` | Simple bias scan |
-| `output_valid` | `GuardrailResult \| null` | Output validation status |
-| `overall_passed` | `bool` | Aggregate guardrail result |
-| `timestamp` | `str` | UTC timestamp |
+| Field | Type |
+|-------|------|
+| `version_id` | `str` |
+| `template` | `str` |
+| `description` | `str` |
+| `created_at` | `str` |
+| `metrics` | `dict[str, float]` |
+| `is_active` | `bool` |
 
-## Programmatic Utilities
-The project also exposes Python utility APIs used by training and evaluation workflows:
+### `RetrievedChunk`
 
-- `src.utils.preprocessing.GrammarPreprocessor`
-- `src.utils.evaluation.Evaluator`
-- `src.utils.config.load_config`
+| Field | Type |
+|-------|------|
+| `text` | `str` |
+| `score` | `float` |
+| `source` | `str` |
+| `chunk_id` | `int` |
 
-Those modules remain documented with docstrings and type hints in source.
+## Notes for v2
+
+- JWT-based authentication is planned but not required in `v1.0.0`
+- Per-IP rate limiting is planned but not yet implemented
+- Streaming corrections and async batch jobs are future enhancements

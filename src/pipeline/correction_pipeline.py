@@ -1,43 +1,81 @@
-"""Runtime service container for the FastAPI grammar correction API."""
+"""Unified correction pipeline for the Grammar Autocorrector system."""
 
 from __future__ import annotations
 
 import logging
+import math
 import re
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from pathlib import Path
+from statistics import fmean
 from time import perf_counter
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-from src.models import BERTGrammarDetector, ErrorSpan, T5GrammarCorrector
-from src.pipeline import (
+from src.models import (
+    BERTGrammarDetector,
+    ErrorSpan,
+    RNNGrammarCorrector,
+    T5GrammarCorrector,
+)
+from src.pipeline.guardrails import (
     FullGuardrailReport,
     GrammarGuardrails,
-    GrammarRAGPipeline,
     GuardrailViolation,
-    PromptVersionManager,
 )
+from src.pipeline.prompt_versioning import PromptVersionManager
+from src.pipeline.rag_pipeline import GrammarRAGPipeline, RetrievedChunk
 from src.utils.config import Config
 from src.utils.evaluation import Evaluator
 
 LOGGER = logging.getLogger(__name__)
 
 
-class APIRuntime:
-    """Coordinate API-facing model, retrieval, and guardrail operations."""
+@dataclass
+class CorrectionResult:
+    """Represent the output of one correction request."""
+
+    original: str
+    corrected: str
+    mode_used: str
+    errors_detected: Optional[List[ErrorSpan]]
+    guardrail_report: FullGuardrailReport
+    processing_time_ms: float
+    model_version: str
+    prompt_version: str
+    status: str = "success"
+    error_message: Optional[str] = None
+
+
+@dataclass
+class BenchmarkReport:
+    """Represent benchmark metrics for a batch of correction requests."""
+
+    gleu: float
+    rouge: Dict[str, float]
+    exact_match: float
+    avg_latency_ms: float
+    p95_latency_ms: float
+    failure_rate: float
+    total_samples: int
+    timestamp: str
+
+
+class CorrectionPipeline:
+    """Unified pipeline orchestrating detection, correction, and guardrails."""
 
     def __init__(self, config: Config) -> None:
-        """Initialize runtime services from application configuration.
+        """Initialize the pipeline and its component services.
 
         Args:
-            config: Fully-populated project configuration.
+            config: Project configuration object.
         """
 
         self.config = config
         self.t5 = T5GrammarCorrector(config.model.t5_model_name)
         self.bert = BERTGrammarDetector(config.model.bert_model_name)
+        self.rnn = RNNGrammarCorrector()
         self.rag = GrammarRAGPipeline(
             embedding_model=config.rag.embedding_model_name,
             vector_store_path=str(config.rag.vector_store_path),
@@ -53,150 +91,208 @@ class APIRuntime:
         )
         self.prompt_manager = PromptVersionManager()
         self.evaluator = Evaluator()
-        self.models_loaded = False
+        self._models_loaded = False
         self.load_errors: List[str] = []
 
-    def initialize(self) -> None:
-        """Load runtime dependencies and initialize the knowledge base."""
+    @property
+    def models_loaded(self) -> bool:
+        """Return whether the primary T5 and BERT models loaded successfully."""
+
+        return self._models_loaded
+
+    def load_all(self) -> None:
+        """Load models and initialize the retrieval knowledge base."""
 
         self.load_errors = []
-        self._ensure_knowledge_base()
-        t5_loaded = self._try_load_model("t5", self.t5.load_model)
-        bert_loaded = self._try_load_model("bert", self.bert.load_model)
-        self.models_loaded = t5_loaded and bert_loaded
+        self._load_component("rag", self._ensure_knowledge_base)
+        t5_loaded = self._load_component("t5", self.t5.load_model)
+        bert_loaded = self._load_component("bert", self.bert.load_model)
+        self._models_loaded = t5_loaded and bert_loaded
         LOGGER.info(
-            "API runtime initialized. models_loaded=%s load_errors=%d",
-            self.models_loaded,
+            "Correction pipeline ready. models_loaded=%s load_errors=%d",
+            self._models_loaded,
             len(self.load_errors),
         )
-
-    def shutdown(self) -> None:
-        """Clean up runtime state on application shutdown."""
-
-        LOGGER.info("Shutting down API runtime.")
 
     def correct(
         self,
         text: str,
         mode: str = "auto",
         num_beams: int = 4,
-        return_detected_errors: bool = False,
-        prompt_version: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Correct a single text input with guardrails and runtime fallbacks.
+        return_errors: bool = False,
+        prompt_version: str | None = None,
+    ) -> CorrectionResult:
+        """Correct a single input text.
 
         Args:
-            text: User input to correct.
-            mode: Correction mode, one of `t5`, `rag`, or `auto`.
-            num_beams: Beam width used for T5 decoding when available.
-            return_detected_errors: Whether to include token-level error spans.
-            prompt_version: Optional prompt version id for RAG mode.
+            text: Input sentence or paragraph to correct.
+            mode: One of `auto`, `t5`, or `rag`.
+            num_beams: Beam width for T5 decoding.
+            return_errors: Whether to attach token-level error spans.
+            prompt_version: Optional prompt version for RAG mode.
 
         Returns:
-            Dict[str, Any]: API-ready correction payload.
+            CorrectionResult: Structured correction output with metadata.
         """
 
         started = perf_counter()
-        report = self._validate_request(text)
-        sanitized_text = report.input_valid.sanitized_text
-        detected_errors = self._detect_errors(sanitized_text)
+        input_report = self.guardrails.run_all_checks(input_text=text)
+        self._raise_for_input_violations(input_report)
+        sanitized_text = input_report.input_valid.sanitized_text
+        resolved_prompt_version = (
+            prompt_version or self.prompt_manager.get_active_prompt().version_id
+        )
 
+        detected_errors = self.detect_errors(sanitized_text)
         if mode == "auto" and not detected_errors:
-            corrected = sanitized_text
+            corrected_text = sanitized_text
             mode_used = "auto"
         elif mode == "rag":
-            corrected = self._rag_correct(sanitized_text, prompt_version=prompt_version)
+            corrected_text = self._rag_correct(
+                sanitized_text,
+                prompt_version=resolved_prompt_version,
+            )
             mode_used = "rag"
         else:
-            corrected = self._t5_correct(sanitized_text, num_beams=num_beams)
+            corrected_text = self._t5_correct(sanitized_text, num_beams=num_beams)
             mode_used = "t5" if mode == "t5" else "auto"
 
-        report = self._finalize_report(sanitized_text, corrected)
-        if not report.output_valid or not report.output_valid.passed:
+        final_report = self.guardrails.run_all_checks(
+            input_text=sanitized_text,
+            output_text=corrected_text,
+        )
+        if final_report.output_valid is None or not final_report.output_valid.passed:
             message = (
-                "; ".join(report.output_valid.violations)
-                if report.output_valid
-                else ("Output validation failed.")
+                "; ".join(final_report.output_valid.violations)
+                if final_report.output_valid is not None
+                else "Output validation failed."
             )
             raise GuardrailViolation("output_validation", message, "error")
 
-        return {
-            "original": sanitized_text,
-            "corrected": report.output_valid.sanitized_text,
-            "mode_used": mode_used,
-            "errors_detected": detected_errors if return_detected_errors else None,
-            "guardrail_report": report,
-            "processing_time_ms": round((perf_counter() - started) * 1000, 3),
-            "prompt_version": prompt_version
-            or self.prompt_manager.get_active_prompt().version_id,
-        }
+        return CorrectionResult(
+            original=sanitized_text,
+            corrected=final_report.output_valid.sanitized_text,
+            mode_used=mode_used,
+            errors_detected=detected_errors if return_errors else None,
+            guardrail_report=final_report,
+            processing_time_ms=round((perf_counter() - started) * 1000, 3),
+            model_version=self.t5.model_name,
+            prompt_version=resolved_prompt_version,
+        )
 
     def correct_batch(
         self,
         texts: List[str],
         mode: str = "auto",
         batch_size: int = 16,
-    ) -> List[Dict[str, Any]]:
-        """Correct a batch of text inputs without aborting on per-item failures.
+    ) -> List[CorrectionResult]:
+        """Correct a batch of texts without aborting on per-item failures.
 
         Args:
-            texts: Input texts to process.
-            mode: Correction mode shared by the batch.
-            batch_size: Batch size hint recorded in the response.
+            texts: Input texts to correct.
+            mode: Shared correction mode for the batch.
+            batch_size: Number of items per processing chunk.
 
         Returns:
-            List[Dict[str, Any]]: Batch item results with success or error status.
+            List[CorrectionResult]: Per-item results, including failures.
         """
 
-        results: List[Dict[str, Any]] = []
-        for text in texts:
-            item_started = perf_counter()
-            try:
-                corrected = self.correct(
-                    text, mode=mode, num_beams=self.config.model.num_beams
-                )
-                results.append(
-                    {
-                        "original": corrected["original"],
-                        "corrected": corrected["corrected"],
-                        "mode_used": corrected["mode_used"],
-                        "status": "success",
-                        "error": None,
-                        "processing_time_ms": corrected["processing_time_ms"],
-                        "batch_size": batch_size,
-                    }
-                )
-            except (
-                Exception
-            ) as exc:  # pragma: no cover - error path exercised in API tests
-                results.append(
-                    {
-                        "original": text,
-                        "corrected": text,
-                        "mode_used": mode,
-                        "status": "error",
-                        "error": str(exc),
-                        "processing_time_ms": round(
-                            (perf_counter() - item_started) * 1000, 3
-                        ),
-                        "batch_size": batch_size,
-                    }
-                )
+        results: List[CorrectionResult] = []
+        for chunk_start in range(0, len(texts), batch_size):
+            chunk = texts[chunk_start : chunk_start + batch_size]
+            for text in chunk:
+                item_started = perf_counter()
+                try:
+                    results.append(self.correct(text, mode=mode, return_errors=False))
+                except Exception as exc:
+                    report = self.guardrails.run_all_checks(input_text=text)
+                    results.append(
+                        CorrectionResult(
+                            original=text,
+                            corrected=text,
+                            mode_used=mode,
+                            errors_detected=None,
+                            guardrail_report=report,
+                            processing_time_ms=round(
+                                (perf_counter() - item_started) * 1000,
+                                3,
+                            ),
+                            model_version=self.t5.model_name,
+                            prompt_version=self.prompt_manager.get_active_prompt().version_id,
+                            status="error",
+                            error_message=str(exc),
+                        )
+                    )
         return results
 
-    def detect(self, text: str) -> Dict[str, Any]:
-        """Detect token-level error spans in a user input.
+    def benchmark(self, test_data: List[Tuple[str, str]]) -> BenchmarkReport:
+        """Run correction over benchmark pairs and compute aggregate metrics.
 
         Args:
-            text: User input to inspect.
+            test_data: Sequence of `(original, reference)` pairs.
 
         Returns:
-            Dict[str, Any]: Detection payload with spans and timing.
+            BenchmarkReport: Aggregate quality and latency statistics.
         """
 
+        if not test_data:
+            raise ValueError("Benchmark data cannot be empty.")
+
+        predictions: List[str] = []
+        references: List[str] = []
+        latencies: List[float] = []
+        failures = 0
+
+        for original, reference in test_data:
+            try:
+                result = self.correct(original, mode="auto", return_errors=False)
+                predictions.append(result.corrected)
+                latencies.append(result.processing_time_ms)
+            except Exception:
+                failures += 1
+                predictions.append(original)
+                latencies.append(0.0)
+            references.append(reference)
+
+        try:
+            gleu = self.evaluator.compute_gleu(
+                predictions,
+                [[reference] for reference in references],
+            )
+        except ImportError:
+            gleu = self._fallback_gleu(predictions, references)
+
+        try:
+            rouge = self.evaluator.compute_rouge(predictions, references)
+        except ImportError:
+            rouge = self._fallback_rouge(predictions, references)
+
+        exact_match = self.evaluator.compute_exact_match(predictions, references)
+        return BenchmarkReport(
+            gleu=gleu,
+            rouge=rouge,
+            exact_match=exact_match,
+            avg_latency_ms=fmean(latencies),
+            p95_latency_ms=self._percentile(latencies, 95),
+            failure_rate=failures / len(test_data),
+            total_samples=len(test_data),
+            timestamp=self.utcnow(),
+        )
+
+    def detect_errors(self, text: str) -> List[ErrorSpan]:
+        """Detect token-level errors in a text input."""
+
+        if self.bert.model is not None and self.bert.tokenizer is not None:
+            return self.bert.detect_errors(text)
+        return self._heuristic_detect_errors(text)
+
+    def detect(self, text: str) -> Dict[str, Any]:
+        """Return an API-friendly error-detection payload."""
+
         started = perf_counter()
-        report = self._validate_request(text)
-        spans = self._detect_errors(report.input_valid.sanitized_text)
+        report = self.guardrails.run_all_checks(input_text=text)
+        self._raise_for_input_violations(report)
+        spans = self.detect_errors(report.input_valid.sanitized_text)
         return {
             "has_errors": bool(spans),
             "errors": spans,
@@ -205,14 +301,7 @@ class APIRuntime:
         }
 
     def add_knowledge_rules(self, rules: List[str]) -> Dict[str, int]:
-        """Add grammar rules to the knowledge base and rebuild the index.
-
-        Args:
-            rules: Rule strings to add.
-
-        Returns:
-            Dict[str, int]: Count of added rules and total stored rules.
-        """
+        """Add rules to the knowledge base and return rule counts."""
 
         cleaned_rules = [rule.strip() for rule in rules if str(rule).strip()]
         if not cleaned_rules:
@@ -222,15 +311,7 @@ class APIRuntime:
         return {"added": len(cleaned_rules), "total_rules": len(self.rag._documents)}
 
     def search_knowledge(self, query: str, top_k: int) -> Dict[str, Any]:
-        """Search the grammar knowledge base for relevant rules.
-
-        Args:
-            query: Search text.
-            top_k: Maximum number of retrieved chunks.
-
-        Returns:
-            Dict[str, Any]: Search query and retrieved chunks.
-        """
+        """Search the knowledge base for relevant grammar rules."""
 
         if not query.strip():
             raise ValueError("Query text cannot be empty.")
@@ -238,40 +319,27 @@ class APIRuntime:
         return {"query": query, "results": self.rag.retrieve(query, top_k=top_k)}
 
     def list_prompt_versions(self) -> Dict[str, Any]:
-        """List all registered prompts and the current active version."""
+        """List prompt versions and the active version."""
 
-        versions = self.prompt_manager.list_versions()
-        active_version = self.prompt_manager.get_active_prompt().version_id
-        return {"versions": versions, "active_version": active_version}
+        return {
+            "versions": self.prompt_manager.list_versions(),
+            "active_version": self.prompt_manager.get_active_prompt().version_id,
+        }
 
     def get_prompt_version(self, version_id: str) -> Any:
-        """Return a single prompt version.
-
-        Args:
-            version_id: Semantic version identifier.
-
-        Returns:
-            Any: Prompt version dataclass.
-        """
+        """Return one prompt version by id."""
 
         return self.prompt_manager.get_prompt(version_id)
 
     def promote_prompt(self, version_id: str) -> Dict[str, str]:
-        """Promote a prompt version to active status.
-
-        Args:
-            version_id: Semantic version identifier to activate.
-
-        Returns:
-            Dict[str, str]: Promotion metadata.
-        """
+        """Promote a prompt version to active status."""
 
         previous = self.prompt_manager.get_active_prompt().version_id
         self.prompt_manager.promote_prompt(version_id)
         return {"promoted": version_id, "previous": previous}
 
     def rollback_prompt(self) -> Dict[str, str]:
-        """Rollback the active prompt to the previous version."""
+        """Rollback to the previous active prompt."""
 
         prompt = self.prompt_manager.rollback()
         return {"rolled_back_to": prompt.version_id}
@@ -282,16 +350,7 @@ class APIRuntime:
         references: List[str],
         metrics: List[str],
     ) -> Dict[str, Any]:
-        """Evaluate prediction/reference pairs using requested metrics.
-
-        Args:
-            predictions: Corrected outputs to score.
-            references: Ground-truth references.
-            metrics: Requested metric names.
-
-        Returns:
-            Dict[str, Any]: Metric payload and evaluated pair count.
-        """
+        """Evaluate predictions against references with selected metrics."""
 
         if len(predictions) != len(references):
             raise ValueError("predictions and references must have the same length.")
@@ -325,14 +384,7 @@ class APIRuntime:
         return {"metrics": results, "evaluated_pairs": len(predictions)}
 
     def serialize(self, value: Any) -> Any:
-        """Convert runtime objects into JSON-serializable data.
-
-        Args:
-            value: Runtime object to serialize.
-
-        Returns:
-            Any: Plain Python data structure.
-        """
+        """Convert nested dataclasses into JSON-serializable structures."""
 
         if is_dataclass(value):
             return {key: self.serialize(item) for key, item in asdict(value).items()}
@@ -342,20 +394,24 @@ class APIRuntime:
             return {key: self.serialize(item) for key, item in value.items()}
         return value
 
-    def _try_load_model(self, label: str, loader: Any) -> bool:
-        """Attempt to load a model, recording any failure for health reporting."""
+    def _load_component(self, label: str, loader: Any) -> bool:
+        """Attempt to load one component and track failures."""
 
+        started = perf_counter()
         try:
             loader()
+            LOGGER.info(
+                "%s loaded in %.2f ms", label, (perf_counter() - started) * 1000
+            )
             return True
-        except Exception as exc:  # pragma: no cover - exercised by runtime startup
+        except Exception as exc:
             message = f"{label} load failed: {exc}"
             LOGGER.warning(message)
             self.load_errors.append(message)
             return False
 
     def _ensure_knowledge_base(self) -> None:
-        """Load or build the default grammar-rule knowledge base."""
+        """Load or build the grammar-rule knowledge base."""
 
         metadata_path = self.config.rag.vector_store_path / "metadata.json"
         chunks_path = self.config.rag.vector_store_path / "chunks.json"
@@ -363,7 +419,7 @@ class APIRuntime:
             self.rag.load_knowledge_base()
             return
 
-        rules_path = self.config.data.sample_data_path / "grammar_rules.txt"
+        rules_path = Path(self.config.data.sample_data_path) / "grammar_rules.txt"
         if not rules_path.exists():
             raise FileNotFoundError(
                 f"Default grammar knowledge base is missing: {rules_path}"
@@ -375,10 +431,9 @@ class APIRuntime:
         ]
         self.rag.build_knowledge_base(rules)
 
-    def _validate_request(self, text: str) -> FullGuardrailReport:
-        """Run input guardrails and raise on blocking violations."""
+    def _raise_for_input_violations(self, report: FullGuardrailReport) -> None:
+        """Raise structured exceptions for blocking input issues."""
 
-        report = self.guardrails.run_all_checks(input_text=text)
         if not report.input_valid.passed:
             raise GuardrailViolation(
                 "input_validation",
@@ -391,25 +446,9 @@ class APIRuntime:
                 "Input was blocked by the toxicity filter.",
                 "error",
             )
-        return report
-
-    def _finalize_report(self, original: str, corrected: str) -> FullGuardrailReport:
-        """Run full input and output guardrail checks."""
-
-        return self.guardrails.run_all_checks(
-            input_text=original,
-            output_text=corrected,
-        )
-
-    def _detect_errors(self, text: str) -> List[ErrorSpan]:
-        """Detect errors with BERT when available, otherwise use heuristics."""
-
-        if self.bert.model is not None and self.bert.tokenizer is not None:
-            return self.bert.detect_errors(text)
-        return self._heuristic_detect_errors(text)
 
     def _t5_correct(self, text: str, num_beams: int) -> str:
-        """Run T5 correction when available, otherwise use heuristic rules."""
+        """Run T5 correction or a heuristic fallback."""
 
         if self.t5.model is not None and self.t5.tokenizer is not None:
             return self.t5.correct(
@@ -417,14 +456,10 @@ class APIRuntime:
             )
         return self._heuristic_correct(text)
 
-    def _rag_correct(self, text: str, prompt_version: Optional[str]) -> str:
-        """Run RAG prompt augmentation and correction using the best available path."""
+    def _rag_correct(self, text: str, prompt_version: str) -> str:
+        """Run retrieval-augmented correction using the chosen prompt version."""
 
-        prompt = (
-            self.prompt_manager.get_prompt(prompt_version)
-            if prompt_version
-            else self.prompt_manager.get_active_prompt()
-        )
+        prompt = self.prompt_manager.get_prompt(prompt_version)
         return self.rag.rag_correct(
             text,
             llm_fn=lambda _: self._t5_correct(
@@ -458,7 +493,7 @@ class APIRuntime:
         return corrected
 
     def _heuristic_detect_errors(self, text: str) -> List[ErrorSpan]:
-        """Detect likely error spans by comparing text with heuristic correction."""
+        """Detect likely error spans by diffing heuristic corrections."""
 
         corrected = self._heuristic_correct(text)
         if corrected == text:
@@ -491,18 +526,17 @@ class APIRuntime:
         def replace(match: re.Match[str]) -> str:
             pronoun = match.group(1)
             verb = match.group(2)
-            lower_verb = verb.casefold()
             irregular = {"go": "goes", "do": "does", "have": "has"}
-            inflected = irregular.get(lower_verb) or self._inflect_present_singular(
-                verb
-            )
+            inflected = irregular.get(
+                verb.casefold()
+            ) or self._inflect_present_singular(verb)
             return f"{pronoun} {inflected}"
 
         pattern = r"\b(He|She|It|he|she|it)\s+([A-Za-z']+)\b"
         return re.sub(pattern, replace, text)
 
     def _fix_plural_pronoun_verbs(self, text: str) -> str:
-        """Remove singular inflection from simple present plural pronoun verbs."""
+        """Remove singular inflection from plural-subject present verbs."""
 
         def replace(match: re.Match[str]) -> str:
             pronoun = match.group(1)
@@ -523,7 +557,7 @@ class APIRuntime:
         return re.sub(pattern, replace, text)
 
     def _fix_past_tense_markers(self, text: str) -> str:
-        """Convert a few common present-tense verbs after past-time markers."""
+        """Convert a few common verbs after explicit past-time markers."""
 
         replacements = {
             "go": "went",
@@ -562,56 +596,55 @@ class APIRuntime:
         return f"{verb}s"
 
     def _fallback_gleu(self, predictions: List[str], references: List[str]) -> float:
-        """Approximate GLEU with an average sequence-similarity ratio."""
+        """Approximate GLEU using token-level sequence similarity."""
 
         if not predictions:
             return 0.0
-        total = 0.0
-        for prediction, reference in zip(predictions, references):
-            total += SequenceMatcher(
+        scores = [
+            SequenceMatcher(
                 a=reference.casefold().split(),
                 b=prediction.casefold().split(),
             ).ratio()
-        return total / len(predictions)
+            for prediction, reference in zip(predictions, references)
+        ]
+        return fmean(scores)
 
     def _fallback_rouge(
         self,
         predictions: List[str],
         references: List[str],
     ) -> Dict[str, float]:
-        """Approximate ROUGE metrics with token-overlap heuristics."""
+        """Approximate ROUGE metrics with token overlap and sequence similarity."""
 
         if not predictions:
             return {"rouge1": 0.0, "rouge2": 0.0, "rougeL": 0.0}
 
-        rouge1_total = 0.0
-        rouge2_total = 0.0
-        rouge_l_total = 0.0
+        rouge1_scores: List[float] = []
+        rouge2_scores: List[float] = []
+        rouge_l_scores: List[float] = []
         for prediction, reference in zip(predictions, references):
             prediction_tokens = prediction.casefold().split()
             reference_tokens = reference.casefold().split()
             overlap = len(set(prediction_tokens) & set(reference_tokens))
-            rouge1_total += overlap / max(len(set(reference_tokens)), 1)
+            rouge1_scores.append(overlap / max(len(set(reference_tokens)), 1))
 
             prediction_bigrams = self._bigrams(prediction_tokens)
             reference_bigrams = self._bigrams(reference_tokens)
             bigram_overlap = len(prediction_bigrams & reference_bigrams)
-            rouge2_total += bigram_overlap / max(len(reference_bigrams), 1)
+            rouge2_scores.append(bigram_overlap / max(len(reference_bigrams), 1))
 
-            rouge_l_total += SequenceMatcher(
-                a=reference_tokens,
-                b=prediction_tokens,
-            ).ratio()
+            rouge_l_scores.append(
+                SequenceMatcher(a=reference_tokens, b=prediction_tokens).ratio()
+            )
 
-        count = len(predictions)
         return {
-            "rouge1": rouge1_total / count,
-            "rouge2": rouge2_total / count,
-            "rougeL": rouge_l_total / count,
+            "rouge1": fmean(rouge1_scores),
+            "rouge2": fmean(rouge2_scores),
+            "rougeL": fmean(rouge_l_scores),
         }
 
-    def _bigrams(self, tokens: Iterable[str]) -> set[tuple[str, str]]:
-        """Build token bigrams for lightweight ROUGE-2 approximation."""
+    def _bigrams(self, tokens: Iterable[str]) -> set[Tuple[str, str]]:
+        """Build token bigrams for the ROUGE-2 fallback."""
 
         token_list = list(tokens)
         return {
@@ -619,8 +652,16 @@ class APIRuntime:
             for index in range(len(token_list) - 1)
         }
 
+    def _percentile(self, values: List[float], percentile: float) -> float:
+        """Compute a percentile from a list of latency values."""
 
-def utc_timestamp() -> str:
-    """Return the current UTC timestamp in ISO-8601 format."""
+        if not values:
+            return 0.0
+        ordered = sorted(values)
+        rank = max(math.ceil((percentile / 100.0) * len(ordered)) - 1, 0)
+        return ordered[min(rank, len(ordered) - 1)]
 
-    return datetime.now(timezone.utc).isoformat()
+    def utcnow(self) -> str:
+        """Return the current UTC timestamp."""
+
+        return datetime.now(timezone.utc).isoformat()

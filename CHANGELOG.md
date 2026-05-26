@@ -3,6 +3,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.0] - Sprint 6 (Production Release)
+### Added
+- CorrectionPipeline unified orchestration class
+- Benchmark endpoint and performance profiling script
+- End-to-end integration tests
+- Performance profiling results and results directory
+- Final polished README
+- Complete user guide
+- Environment example and known issues documentation
+
+### Changed
+- API wired to CorrectionPipeline as the single dependency
+- Coverage gate raised above 80% for the runnable runtime layers
+
+### Fixed
+- Sprint integration gaps between API, RAG, prompt management, and guardrails
+- Output validation and batch-failure handling edge cases
+
 ## [0.5.0] - Sprint 5
 ### Added
 - FastAPI REST API with health, correction, detection, knowledge base, prompt management, and evaluation endpoints

@@ -182,6 +182,8 @@ class CorrectionResponse(BaseModel):
         ...,
         description="End-to-end processing time in milliseconds.",
     )
+    model_version: str = Field(..., description="Model or checkpoint identifier used.")
+    prompt_version: str = Field(..., description="Resolved prompt version id.")
     request_id: str = Field(..., description="Request correlation identifier.")
 
 
@@ -237,11 +239,19 @@ class BatchCorrectionItem(BaseModel):
     original: str = Field(..., description="Original input text.")
     corrected: str = Field(..., description="Corrected output text or fallback copy.")
     mode_used: str = Field(..., description="Mode used for this item.")
+    errors_detected: Optional[List[ErrorSpanModel]] = Field(
+        None,
+        description="Detected token-level error spans when available.",
+    )
+    guardrail_report: FullGuardrailReportModel = Field(
+        ...,
+        description="Guardrail report for this batch item.",
+    )
     status: Literal["success", "error"] = Field(
         ...,
         description="Item-level processing status.",
     )
-    error: Optional[str] = Field(
+    error_message: Optional[str] = Field(
         None,
         description="Item-level error message when processing failed.",
     )
@@ -249,7 +259,8 @@ class BatchCorrectionItem(BaseModel):
         ...,
         description="Item-level processing time in milliseconds.",
     )
-    batch_size: int = Field(..., description="Batch size hint used for this request.")
+    model_version: str = Field(..., description="Model or checkpoint identifier used.")
+    prompt_version: str = Field(..., description="Resolved prompt version id.")
 
 
 class BatchCorrectionResponse(BaseModel):
@@ -425,3 +436,54 @@ class EvaluateResponse(BaseModel):
 
     metrics: Dict[str, Any] = Field(..., description="Requested metric results.")
     evaluated_pairs: int = Field(..., description="Number of evaluated examples.")
+
+
+class BenchmarkPairRequest(BaseModel):
+    """One benchmark sample pair."""
+
+    original: str = Field(..., description="Erroneous source text to correct.")
+    reference: str = Field(..., description="Ground-truth corrected text.")
+
+
+class BenchmarkRequest(BaseModel):
+    """Benchmark endpoint request model."""
+
+    test_pairs: List[BenchmarkPairRequest] = Field(
+        ...,
+        description="Benchmark sample pairs of source and reference text.",
+    )
+    max_samples: int = Field(
+        100,
+        ge=1,
+        le=1000,
+        description="Maximum number of benchmark pairs to evaluate.",
+    )
+
+    @field_validator("test_pairs")
+    @classmethod
+    def validate_test_pairs(
+        cls,
+        value: List[BenchmarkPairRequest],
+    ) -> List[BenchmarkPairRequest]:
+        """Require at least one benchmark pair."""
+
+        if not value:
+            raise ValueError("At least one benchmark pair is required.")
+        return value
+
+
+class BenchmarkReportResponse(BaseModel):
+    """Benchmark report response model."""
+
+    gleu: float = Field(..., description="Corpus-level GLEU score.")
+    rouge: Dict[str, float] = Field(..., description="ROUGE metrics dictionary.")
+    exact_match: float = Field(
+        ..., description="Case-insensitive exact match accuracy."
+    )
+    avg_latency_ms: float = Field(..., description="Average correction latency.")
+    p95_latency_ms: float = Field(
+        ..., description="95th percentile correction latency."
+    )
+    failure_rate: float = Field(..., description="Fraction of failed corrections.")
+    total_samples: int = Field(..., description="Total number of benchmarked samples.")
+    timestamp: str = Field(..., description="UTC timestamp for the benchmark run.")

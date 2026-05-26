@@ -9,9 +9,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.api.app import app
-from src.api.routes import get_runtime
+from src.api.routes import get_pipeline
 from src.models import ErrorSpan
 from src.pipeline import (
+    BenchmarkReport,
     BiasResult,
     FullGuardrailReport,
     GuardrailResult,
@@ -31,8 +32,8 @@ class _ActivePrompt:
         return self
 
 
-class FakeRuntime:
-    """Mock runtime used to isolate API behavior from model dependencies."""
+class FakePipeline:
+    """Mock pipeline used to isolate API behavior from model dependencies."""
 
     def __init__(self) -> None:
         self.models_loaded = True
@@ -42,7 +43,7 @@ class FakeRuntime:
                 version_id="v1.0.0",
                 template="Correct: {input}",
                 description="baseline",
-                created_at="2026-05-25T00:00:00+00:00",
+                created_at="2026-05-26T00:00:00+00:00",
                 metrics={"gleu": 0.61},
                 is_active=False,
             ),
@@ -50,7 +51,7 @@ class FakeRuntime:
                 version_id="v1.1.0",
                 template="Context: {context}\nSentence: {input}",
                 description="rag",
-                created_at="2026-05-25T00:01:00+00:00",
+                created_at="2026-05-26T00:01:00+00:00",
                 metrics={"gleu": 0.68},
                 is_active=True,
             ),
@@ -64,6 +65,9 @@ class FakeRuntime:
         if isinstance(value, dict):
             return {key: self.serialize(item) for key, item in value.items()}
         return value
+
+    def utcnow(self) -> str:
+        return "2026-05-26T00:00:00+00:00"
 
     def _report(self, original: str, corrected: str) -> FullGuardrailReport:
         input_valid = GuardrailResult(
@@ -84,7 +88,7 @@ class FakeRuntime:
             bias=BiasResult(has_bias=False, bias_types=[], suggestions=[]),
             output_valid=output_valid,
             overall_passed=True,
-            timestamp="2026-05-25T00:00:00+00:00",
+            timestamp="2026-05-26T00:00:00+00:00",
         )
 
     def correct(
@@ -92,7 +96,7 @@ class FakeRuntime:
         text: str,
         mode: str = "auto",
         num_beams: int = 4,
-        return_detected_errors: bool = False,
+        return_errors: bool = False,
         prompt_version: str | None = None,
     ) -> Dict[str, Any]:
         if not text.strip():
@@ -111,10 +115,13 @@ class FakeRuntime:
             "original": text,
             "corrected": corrected,
             "mode_used": mode,
-            "errors_detected": errors if return_detected_errors else None,
+            "errors_detected": errors if return_errors else None,
             "guardrail_report": self._report(text, corrected),
             "processing_time_ms": 12.5,
+            "model_version": "fake-t5",
             "prompt_version": prompt_version or "v1.1.0",
+            "status": "success",
+            "error_message": None,
         }
 
     def correct_batch(
@@ -128,10 +135,13 @@ class FakeRuntime:
                 "original": text,
                 "corrected": text.replace(" go ", " goes "),
                 "mode_used": mode,
+                "errors_detected": None,
+                "guardrail_report": self._report(text, text.replace(" go ", " goes ")),
                 "status": "success",
-                "error": None,
+                "error_message": None,
                 "processing_time_ms": 7.5,
-                "batch_size": batch_size,
+                "model_version": "fake-t5",
+                "prompt_version": "v1.1.0",
             }
             for text in texts
         ]
@@ -164,9 +174,9 @@ class FakeRuntime:
                     text="A singular subject normally takes a singular verb.",
                     score=0.12,
                     source="document_0",
-                    chunk_id=0,
+                    chunk_id=index,
                 )
-                for _ in range(top_k)
+                for index in range(top_k)
             ],
         }
 
@@ -199,13 +209,25 @@ class FakeRuntime:
             "evaluated_pairs": len(predictions),
         }
 
+    def benchmark(self, test_data: List[tuple[str, str]]) -> BenchmarkReport:
+        return BenchmarkReport(
+            gleu=0.73,
+            rouge={"rouge1": 0.81, "rouge2": 0.7, "rougeL": 0.79},
+            exact_match=0.66,
+            avg_latency_ms=11.2,
+            p95_latency_ms=15.5,
+            failure_rate=0.0,
+            total_samples=len(test_data),
+            timestamp="2026-05-26T00:00:00+00:00",
+        )
+
 
 @pytest.fixture()
 def client() -> TestClient:
-    """Provide a test client with runtime dependency overrides."""
+    """Provide a test client with pipeline dependency overrides."""
 
-    fake_runtime = FakeRuntime()
-    app.dependency_overrides[get_runtime] = lambda: fake_runtime
+    fake_pipeline = FakePipeline()
+    app.dependency_overrides[get_pipeline] = lambda: fake_pipeline
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
@@ -255,7 +277,8 @@ def test_detect_endpoint_valid_input(client: TestClient) -> None:
 
 def test_knowledge_search_returns_results(client: TestClient) -> None:
     response = client.get(
-        "/knowledge/search", params={"query": "She go school", "top_k": 2}
+        "/knowledge/search",
+        params={"query": "She go school", "top_k": 2},
     )
     assert response.status_code == 200
     assert len(response.json()["results"]) == 2
@@ -286,6 +309,32 @@ def test_evaluate_endpoint_returns_metrics(client: TestClient) -> None:
     )
     assert response.status_code == 200
     assert response.json()["evaluated_pairs"] == 1
+
+
+def test_knowledge_add_endpoint_returns_counts(client: TestClient) -> None:
+    response = client.post(
+        "/knowledge/add",
+        json={"rules": ["Use 'an' before a vowel sound."]},
+    )
+    assert response.status_code == 200
+    assert response.json()["added"] == 1
+
+
+def test_benchmark_endpoint_returns_valid_report(client: TestClient) -> None:
+    response = client.post(
+        "/benchmark",
+        json={
+            "test_pairs": [
+                {
+                    "original": "She go to school everyday.",
+                    "reference": "She goes to school every day.",
+                }
+            ],
+            "max_samples": 1,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["total_samples"] == 1
 
 
 if __name__ == "__main__":

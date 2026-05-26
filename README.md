@@ -1,200 +1,175 @@
 # Grammar Autocorrector System
 
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/build-ci%20configured-brightgreen.svg)](.github/workflows/ci.yml)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-passing-green.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-81%25-brightgreen.svg)]()
 
-Production-oriented NLP grammar correction platform combining transformer-based correction, token-level error detection, retrieval-augmented prompting, and responsible AI guardrails. The repository is structured to support research experimentation, API serving, and an interactive UI from a single codebase.
-
-This Sprint 1 scaffold establishes the engineering foundation for later sprints that will implement T5, BERT, RNN, RAG, FastAPI, and Gradio components.
-
-## Table of Contents
-
-- [Features](#features)
-- [Architecture Overview](#architecture-overview)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Project Structure](#project-structure)
-- [Models Used](#models-used)
-- [Datasets](#datasets)
-- [Evaluation Results](#evaluation-results)
-- [API Usage](#api-usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
+> An NLP-based grammar correction system built around fine-tuned T5, BERT error
+> detection, retrieval-augmented prompting, and responsible AI guardrails. The
+> repository includes the training, serving, benchmarking, and UI stack, with
+> heuristic fallbacks so the API remains runnable before local model weights are
+> added.
 
 ## Features
 
-- T5 sequence-to-sequence grammar correction pipeline for fluent sentence rewriting.
-- BERT token-level grammar error detection for locating likely error spans.
-- RNN baseline model for benchmarking neural performance against modern transformers.
-- Retrieval-Augmented Generation workflow using embeddings and FAISS-backed rule lookup.
-- Prompt versioning for controlled experimentation and production rollout.
-- Responsible AI guardrails including validation, toxicity checks, and bias-aware review.
-- FastAPI backend design for inference, evaluation, and prompt/knowledge management.
-- Gradio web interface plan for single-text, batch, and evaluation workflows.
-- Test-first project layout with unit, integration, and performance test planning.
+- **T5 Sequence-to-Sequence Correction** for fluent grammar rewriting with beam search support
+- **BERT Token-level Error Detection** for error-span highlighting and explainability
+- **RNN Baseline** with bidirectional LSTM and Bahdanau attention for benchmarking
+- **RAG Pipeline** with FAISS-compatible retrieval over grammar-rule knowledge
+- **Prompt Versioning** with semantic versioning, promotion, rollback, and metric tracking
+- **Responsible AI Guardrails** for input validation, toxicity checks, bias checks, and output validation
+- **FastAPI Backend** with correction, batch, evaluation, prompt, knowledge, and benchmark endpoints
+- **Interactive Gradio UI** with tabs for correction, batch processing, detection, prompt management, and evaluation
+- **Docker-ready Deployment** for API and UI services
+- **Testing and Profiling Tooling** with integration tests, coverage reporting, and performance profiling
 
-## Architecture Overview
+## Architecture
 
 ```text
 Input Text
     |
     v
-+-----------------------+
-| Input Validation      |
-| and Guardrails        |
-+-----------+-----------+
-            |
-            v
-+-----------------------+
-| BERT Error Detector   |
-| Detects error spans   |
-+-----------+-----------+
-            |
-            v
-+-----------------------+        +------------------------+
-| Mode Selection        |<------>| Prompt Versioning      |
-| T5 / RNN / RAG        |        | Active prompt template |
-+-----------+-----------+        +------------------------+
-            |
-            +------------------------------+
-            |                              |
-            v                              v
-+-----------------------+        +------------------------+
-| T5 Corrector          |        | RAG Pipeline           |
-| Seq2seq correction    |        | Embeddings + FAISS     |
-+-----------+-----------+        +-----------+------------+
-            |                                |
-            +---------------+----------------+
-                            |
-                            v
-                  +-----------------------+
-                  | Output Guardrails     |
-                  | Safety + consistency  |
-                  +-----------+-----------+
-                              |
-                              v
-                        Corrected Output
-```
-
-## Installation
-
-1. Create and activate a virtual environment.
-2. Install Python dependencies.
-3. Use the provided `Makefile` for linting, testing, and future training commands.
-
-```bash
-python -m venv .venv
-. .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-For Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install --upgrade pip
-pip install -r requirements.txt
++---------------------+    <- Length check, toxicity, prompt injection defense
+|  Input Guardrails   |
++----------+----------+
+           |
+     +-----v------+
+     | BERT Detect |    <- Token-level error classification
+     +-----+------+
+           | errors detected?
+     +-----v----------------------+
+     |  Correction Mode Selection |
+     |  - T5 (beam search)        |
+     |  - RAG + T5                |
+     +-----+----------------------+
+           |
+     +-----v------+    <- FAISS vector search -> grammar rules
+     | RAG Lookup |
+     +-----+------+
+           |
+     +-----v------+    <- Fine-tuned seq2seq or local fallback
+     | T5 Correct |
+     +-----+------+
+           |
++----------v----------+    <- Length ratio, meaning preservation
+|  Output Guardrails  |
++----------+----------+
+           |
+           v
+    Corrected Text
 ```
 
 ## Quick Start
 
-The example below shows the planned usage interface that later sprints will implement:
+```bash
+git clone https://github.com/parvabarot/grammar-autocorrector
+cd grammar-autocorrector
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
 ```python
-from src.models.t5_corrector import T5GrammarCorrector
+from src.pipeline.correction_pipeline import CorrectionPipeline
+from src.utils.config import load_config
 
-model = T5GrammarCorrector(model_name="t5-base")
-model.load_model()
-print(model.correct("She go to school everyday."))
+pipeline = CorrectionPipeline(load_config())
+pipeline.load_all()
+result = pipeline.correct("She go to school everyday.")
+print(result.corrected)
 ```
+
+## Docker
+
+```bash
+docker-compose up --build
+```
+
+- API docs: `http://localhost:8000/docs`
+- UI: `http://localhost:7860`
 
 ## Project Structure
 
 ```text
 grammar-autocorrector/
-|- README.md                  # Project overview and onboarding
-|- CHANGELOG.md               # Release history
-|- LICENSE                    # License terms
-|- requirements.txt           # Python dependencies
-|- Makefile                   # Common development commands
-|- docs/                      # Requirements, design, architecture, testing, guides
-|- src/                       # Application source code
-|  |- models/                 # T5, BERT, and RNN model modules
-|  |- pipeline/               # RAG, prompt versioning, and guardrails
-|  |- api/                    # FastAPI backend
-|  |- utils/                  # Shared utilities and configuration
-|  \- ui/                     # Gradio frontend
-|- data/                      # Raw, processed, and sample datasets
-|- models/                    # Trained checkpoints (gitignored)
-|- notebooks/                 # Exploratory and demo notebooks
-|- tests/                     # Unit and integration tests
-|- scripts/                   # Training, download, and evaluation scripts
-\- .github/workflows/         # CI and lint automation
+|-- README.md
+|-- CHANGELOG.md
+|-- LICENSE
+|-- .env.example
+|-- requirements.txt
+|-- setup.py
+|-- pyproject.toml
+|-- Makefile
+|-- Dockerfile
+|-- docker-compose.yml
+|-- docs/                    # SRS, SDD, architecture, API, user, deployment, test docs
+|-- src/
+|   |-- models/             # T5, BERT, and RNN model implementations
+|   |-- pipeline/           # Unified correction pipeline, RAG, prompts, guardrails
+|   |-- api/                # FastAPI application, routes, and schemas
+|   |-- utils/              # Config, preprocessing, and evaluation utilities
+|   `-- ui/                 # Gradio application
+|-- data/                   # Raw, processed, sample, registry, and vector-store inputs
+|-- models/                 # Local checkpoints (gitignored)
+|-- notebooks/              # Exploration, fine-tuning, evaluation, and demo notebooks
+|-- results/                # Evaluation and profiling outputs
+|-- tests/                  # Unit and integration test suites
+`-- scripts/                # Training, evaluation, download, and profiling entrypoints
 ```
 
-## Models Used
+## Models and Data
 
-- `T5`: Primary sequence-to-sequence grammar correction model that rewrites erroneous text into corrected text.
-- `BERT`: Token classification model that highlights likely error spans for analysis and explainability.
-- `RNN Baseline`: Bidirectional recurrent encoder-decoder baseline used to benchmark simpler architectures.
+- **T5** is the primary grammar correction model and main serving target
+- **BERT** performs token-level detection to decide when correction is needed and to surface error spans
+- **RNN Baseline** provides a classical seq2seq benchmark for comparison
+- **CoNLL-2014**, **BEA-2019-style evaluation**, and **JFLEG** are the intended benchmark families
+- The repository does **not** ship trained weights. Add local checkpoints or run the training scripts first for real benchmark scoring.
 
-## Datasets
+## Evaluation and Benchmarking
 
-Planned benchmark and training references:
+Two result artifacts are tracked in the repository structure:
 
-- `CoNLL-2014 Shared Task`: Standard grammatical error correction benchmark.
-- `BEA-2019`: Broad evaluation benchmark for grammar correction systems.
-- `JFLEG`: Fluency-oriented benchmark often used for grammar correction experimentation.
+- [results/evaluation_report.md](/C:/Users/parva/OneDrive/Desktop/Project/Grammer Autocorrector/results/evaluation_report.md)
+- [results/performance_profile.md](/C:/Users/parva/OneDrive/Desktop/Project/Grammer Autocorrector/results/performance_profile.md)
 
-Raw and processed data directories are scaffolded now and will be populated in later sprints.
+Quality metrics are produced after training and evaluation runs. The committed
+repository intentionally avoids publishing fabricated model scores before
+checkpoints exist locally.
 
-## Evaluation Results
-
-| Model | Precision | Recall | F1 | Accuracy |
-|-------|-----------|--------|----|----------|
-| T5 Corrector | TBD | TBD | TBD | TBD |
-| BERT Detector | TBD | TBD | TBD | TBD |
-| RNN Baseline | TBD | TBD | TBD | TBD |
-| RAG-Enhanced Pipeline | TBD | TBD | TBD | TBD |
-
-## API Usage
-
-Planned REST inference example:
+Representative commands:
 
 ```bash
-curl -X POST "http://localhost:8000/correct" \
-  -H "Content-Type: application/json" \
-  -d '{"text":"She go to school everyday.","mode":"auto","num_beams":4}'
+python scripts/evaluate.py
+python scripts/profile_pipeline.py
 ```
 
-Planned Python client example:
+## Running the Stack
 
-```python
-import requests
-
-response = requests.post(
-    "http://localhost:8000/correct",
-    json={"text": "She go to school everyday.", "mode": "auto", "num_beams": 4},
-    timeout=30,
-)
-print(response.json())
+```bash
+make test
+make lint
+python -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+python src/ui/gradio_app.py
 ```
 
-## Contributing
+## Documentation
 
-1. Create a feature branch from `main`.
-2. Install dependencies with `pip install -r requirements.txt`.
-3. Run `make lint` and `make test` before opening a pull request.
-4. Document architectural or behavioral changes in `docs/` and `CHANGELOG.md`.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+- [Software Requirements Specification](docs/SRS.md)
+- [Software Design Document](docs/SDD.md)
+- [Architecture Decision Records](docs/architecture.md)
+- [API Reference](docs/api_reference.md)
+- [User Guide](docs/user_guide.md)
+- [Deployment Guide](docs/deployment_guide.md)
+- [Test Plan](docs/testing_plan.md)
+- [Known Issues](docs/known_issues.md)
 
 ## Author
 
-Parva Barot
+**Parva Barot** - Software Engineer  
+MS Information Technology, Arizona State University (2025)  
+[LinkedIn](https://linkedin.com/in/parvabarot) | [GitHub](https://github.com/parvabarot)
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.

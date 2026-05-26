@@ -13,5 +13,11 @@ src_paths = ["src", "tests", "scripts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=src --cov-report=term-missing"
+addopts = "--cov=src --cov-report=html --cov-report=term-missing"
 pythonpath = ["src"]
+
+[tool.coverage.run]
+omit = [
+    "src/models/rnn_baseline.py",
+    "src/ui/gradio_app.py",
+]

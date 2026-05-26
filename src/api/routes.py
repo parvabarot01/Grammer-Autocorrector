@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import asdict
 from time import perf_counter
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
-from src.api.runtime import APIRuntime, utc_timestamp
 from src.api.schemas import (
     BatchCorrectionRequest,
     BatchCorrectionResponse,
+    BenchmarkReportResponse,
+    BenchmarkRequest,
     CorrectionRequest,
     CorrectionResponse,
     DetectionRequest,
@@ -28,19 +30,19 @@ from src.api.schemas import (
     PromptRollbackResponse,
     PromptVersionResponse,
 )
-from src.pipeline import GuardrailViolation
+from src.pipeline import CorrectionPipeline, GuardrailViolation
 
 LOGGER = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def get_runtime(request: Request) -> APIRuntime:
-    """Return the initialized API runtime from application state."""
+def get_pipeline(request: Request) -> CorrectionPipeline:
+    """Return the initialized correction pipeline from application state."""
 
-    runtime = getattr(request.app.state, "runtime", None)
-    if runtime is None:
-        raise RuntimeError("API runtime has not been initialized.")
-    return runtime
+    pipeline = getattr(request.app.state, "pipeline", None)
+    if pipeline is None:
+        raise RuntimeError("Correction pipeline has not been initialized.")
+    return pipeline
 
 
 def _request_id(request: Request) -> str:
@@ -60,7 +62,7 @@ HEALTH_OPENAPI = {
         "status": "ok",
         "models_loaded": False,
         "version": "1.0.0",
-        "timestamp": "2026-05-25T12:00:00+00:00",
+        "timestamp": "2026-05-26T12:00:00+00:00",
     }
 }
 INFO_OPENAPI = {
@@ -74,6 +76,7 @@ INFO_OPENAPI = {
             "knowledge-search",
             "prompt-management",
             "evaluation",
+            "benchmarking",
         ],
     }
 }
@@ -143,22 +146,46 @@ EVALUATE_OPENAPI = {
         }
     }
 }
+BENCHMARK_OPENAPI = {
+    "requestBody": {
+        "content": {
+            "application/json": {
+                "example": {
+                    "test_pairs": [
+                        {
+                            "original": "She go to school everyday.",
+                            "reference": "She goes to school every day.",
+                        },
+                        {
+                            "original": "He have a apple.",
+                            "reference": "He has an apple.",
+                        },
+                    ],
+                    "max_samples": 2,
+                }
+            }
+        }
+    }
+}
 
 
 @router.get("/health", response_model=HealthResponse, openapi_extra=HEALTH_OPENAPI)
-def health(request: Request, runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def health(
+    request: Request,
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
+) -> Any:
     """Return service health and model loading status."""
 
     return {
         "status": "ok",
-        "models_loaded": runtime.models_loaded,
+        "models_loaded": pipeline.models_loaded,
         "version": request.app.version,
-        "timestamp": utc_timestamp(),
+        "timestamp": pipeline.utcnow(),
     }
 
 
 @router.get("/info", response_model=InfoResponse, openapi_extra=INFO_OPENAPI)
-def info(runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def info(pipeline: CorrectionPipeline = Depends(get_pipeline)) -> Any:
     """Return service metadata, active prompt version, and capabilities."""
 
     return {
@@ -168,7 +195,7 @@ def info(runtime: APIRuntime = Depends(get_runtime)) -> Any:
             "GrammarRAGPipeline",
             "GrammarGuardrails",
         ],
-        "prompt_version": runtime.prompt_manager.get_active_prompt().version_id,
+        "prompt_version": pipeline.prompt_manager.get_active_prompt().version_id,
         "capabilities": [
             "single-correction",
             "batch-correction",
@@ -176,6 +203,7 @@ def info(runtime: APIRuntime = Depends(get_runtime)) -> Any:
             "knowledge-search",
             "prompt-management",
             "evaluation",
+            "benchmarking",
         ],
     }
 
@@ -188,7 +216,7 @@ def info(runtime: APIRuntime = Depends(get_runtime)) -> Any:
 def correct_text(
     payload: CorrectionRequest,
     request: Request,
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Correct a single input string."""
 
@@ -196,11 +224,11 @@ def correct_text(
         raise _api_error(400, "Input text cannot be empty.")
 
     try:
-        result = runtime.correct(
+        result = pipeline.correct(
             text=payload.text,
             mode=payload.mode,
             num_beams=payload.num_beams,
-            return_detected_errors=payload.return_detected_errors,
+            return_errors=payload.return_detected_errors,
             prompt_version=payload.prompt_version,
         )
     except GuardrailViolation as exc:
@@ -213,9 +241,8 @@ def correct_text(
         LOGGER.exception("Correction failed.")
         raise _api_error(500, str(exc)) from exc
 
-    serialized = runtime.serialize(result)
+    serialized = pipeline.serialize(result)
     serialized["request_id"] = _request_id(request)
-    serialized.pop("prompt_version", None)
     return serialized
 
 
@@ -226,13 +253,13 @@ def correct_text(
 )
 def correct_batch(
     payload: BatchCorrectionRequest,
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Correct a batch of texts with per-item fault tolerance."""
 
     started = perf_counter()
     try:
-        results = runtime.correct_batch(
+        results = pipeline.correct_batch(
             texts=payload.texts,
             mode=payload.mode,
             batch_size=payload.batch_size,
@@ -244,7 +271,7 @@ def correct_batch(
         raise _api_error(500, str(exc)) from exc
 
     return {
-        "results": runtime.serialize(results),
+        "results": pipeline.serialize(results),
         "total_processed": len(results),
         "processing_time_ms": round((perf_counter() - started) * 1000, 3),
     }
@@ -257,7 +284,7 @@ def correct_batch(
 )
 def detect_errors(
     payload: DetectionRequest,
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Detect token-level grammar errors without applying correction."""
 
@@ -265,7 +292,7 @@ def detect_errors(
         raise _api_error(400, "Input text cannot be empty.")
 
     try:
-        return runtime.serialize(runtime.detect(payload.text))
+        return pipeline.serialize(pipeline.detect(payload.text))
     except GuardrailViolation as exc:
         raise _api_error(422, str(exc)) from exc
     except ValueError as exc:
@@ -282,12 +309,12 @@ def detect_errors(
 )
 def add_knowledge(
     payload: KnowledgeAddRequest,
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Add rules to the grammar knowledge base."""
 
     try:
-        return runtime.add_knowledge_rules(payload.rules)
+        return pipeline.add_knowledge_rules(payload.rules)
     except ValueError as exc:
         raise _api_error(400, str(exc)) from exc
     except Exception as exc:  # pragma: no cover - defensive server path
@@ -307,12 +334,12 @@ def search_knowledge(
     top_k: int = Query(
         5, description="Maximum number of rules to retrieve.", ge=1, le=20
     ),
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Search the grammar-rule knowledge base."""
 
     try:
-        return runtime.serialize(runtime.search_knowledge(query=query, top_k=top_k))
+        return pipeline.serialize(pipeline.search_knowledge(query=query, top_k=top_k))
     except ValueError as exc:
         raise _api_error(400, str(exc)) from exc
     except Exception as exc:  # pragma: no cover - defensive server path
@@ -323,10 +350,10 @@ def search_knowledge(
 @router.get(
     "/prompts", response_model=PromptListResponse, openapi_extra=PROMPTS_OPENAPI
 )
-def list_prompts(runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def list_prompts(pipeline: CorrectionPipeline = Depends(get_pipeline)) -> Any:
     """List registered prompts and the active version."""
 
-    return runtime.serialize(runtime.list_prompt_versions())
+    return pipeline.serialize(pipeline.list_prompt_versions())
 
 
 @router.get(
@@ -334,11 +361,14 @@ def list_prompts(runtime: APIRuntime = Depends(get_runtime)) -> Any:
     response_model=PromptVersionResponse,
     openapi_extra={"x-path-example": {"version_id": "v1.1.0"}},
 )
-def get_prompt(version_id: str, runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def get_prompt(
+    version_id: str,
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
+) -> Any:
     """Return a single prompt version by id."""
 
     try:
-        return runtime.serialize(runtime.get_prompt_version(version_id))
+        return pipeline.serialize(pipeline.get_prompt_version(version_id))
     except KeyError as exc:
         raise _api_error(400, str(exc)) from exc
 
@@ -348,11 +378,14 @@ def get_prompt(version_id: str, runtime: APIRuntime = Depends(get_runtime)) -> A
     response_model=PromptPromoteResponse,
     openapi_extra={"x-path-example": {"version_id": "v2.0.0"}},
 )
-def promote_prompt(version_id: str, runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def promote_prompt(
+    version_id: str,
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
+) -> Any:
     """Promote a prompt version to active status."""
 
     try:
-        return runtime.promote_prompt(version_id)
+        return pipeline.promote_prompt(version_id)
     except KeyError as exc:
         raise _api_error(400, str(exc)) from exc
 
@@ -362,10 +395,10 @@ def promote_prompt(version_id: str, runtime: APIRuntime = Depends(get_runtime)) 
     response_model=PromptRollbackResponse,
     openapi_extra={"x-example-response": {"rolled_back_to": "v1.1.0"}},
 )
-def rollback_prompt(runtime: APIRuntime = Depends(get_runtime)) -> Any:
+def rollback_prompt(pipeline: CorrectionPipeline = Depends(get_pipeline)) -> Any:
     """Rollback to the previously active prompt version."""
 
-    return runtime.rollback_prompt()
+    return pipeline.rollback_prompt()
 
 
 @router.post(
@@ -375,12 +408,12 @@ def rollback_prompt(runtime: APIRuntime = Depends(get_runtime)) -> Any:
 )
 def evaluate(
     payload: EvaluateRequest,
-    runtime: APIRuntime = Depends(get_runtime),
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
 ) -> Any:
     """Evaluate predictions against references with selected metrics."""
 
     try:
-        return runtime.evaluate_metrics(
+        return pipeline.evaluate_metrics(
             predictions=payload.predictions,
             references=payload.references,
             metrics=payload.metrics,
@@ -389,4 +422,29 @@ def evaluate(
         raise _api_error(400, str(exc)) from exc
     except Exception as exc:  # pragma: no cover - defensive server path
         LOGGER.exception("Evaluation failed.")
+        raise _api_error(500, str(exc)) from exc
+
+
+@router.post(
+    "/benchmark",
+    response_model=BenchmarkReportResponse,
+    openapi_extra=BENCHMARK_OPENAPI,
+)
+def benchmark(
+    payload: BenchmarkRequest,
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
+) -> Any:
+    """Benchmark correction quality and latency over test pairs."""
+
+    benchmark_pairs = [
+        (item.original, item.reference)
+        for item in payload.test_pairs[: payload.max_samples]
+    ]
+    try:
+        report = pipeline.benchmark(benchmark_pairs)
+        return asdict(report)
+    except ValueError as exc:
+        raise _api_error(400, str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - defensive server path
+        LOGGER.exception("Benchmark failed.")
         raise _api_error(500, str(exc)) from exc

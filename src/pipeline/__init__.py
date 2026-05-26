@@ -1,5 +1,6 @@
-"""Pipeline modules for RAG, prompt management, and guardrails."""
+"""Pipeline modules for orchestration, RAG, prompt management, and guardrails."""
 
+from .correction_pipeline import BenchmarkReport, CorrectionPipeline, CorrectionResult
 from .guardrails import (
     BiasResult,
     FullGuardrailReport,
@@ -12,7 +13,10 @@ from .prompt_versioning import PromptVersion, PromptVersionManager
 from .rag_pipeline import GrammarRAGPipeline, RetrievedChunk
 
 __all__ = [
+    "BenchmarkReport",
     "BiasResult",
+    "CorrectionPipeline",
+    "CorrectionResult",
     "FullGuardrailReport",
     "GrammarGuardrails",
     "GrammarRAGPipeline",
