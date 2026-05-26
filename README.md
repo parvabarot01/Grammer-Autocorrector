@@ -168,7 +168,7 @@ python src/ui/gradio_app.py
 
 **Parva Barot** - Software Engineer  
 MS Information Technology, Arizona State University (2025)  
-[LinkedIn](https://linkedin.com/in/parvabarot) | [GitHub](https://github.com/parvabarot)
+[LinkedIn](https://linkedin.com/in/parvabarot) | [GitHub](https://github.com/parvabarot01)
 
 ## License
 
