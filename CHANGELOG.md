@@ -3,6 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## Sprint 9 - Public Next.js Frontend and Public-Safe API
+### Added
+- Next.js App Router frontend with TypeScript and Tailwind CSS
+- Futuristic public product UI with correction, change highlights, explanations, loading states, error handling, reset, and copy support
+- `POST /public/correct` endpoint with a deliberately minimal public response contract
+- Public-safe diff adapter for user-friendly before and after changes
+- Frontend API client configured through `NEXT_PUBLIC_API_URL`
+- Docker Compose and frontend Dockerfile support for the public web application
+- Regression tests that prevent internal model and pipeline details from leaking through the public endpoint
+
+### Changed
+- CORS now uses the configured `FRONTEND_ORIGIN`
+- Gradio is documented as the optional legacy operator UI
+- README, API reference, deployment guide, user guide, and known issues documentation updated for the public MVP
+
 ## [1.0.0] - Sprint 6 (Production Release)
 ### Added
 - CorrectionPipeline unified orchestration class

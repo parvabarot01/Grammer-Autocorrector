@@ -5,11 +5,11 @@
 [![Tests](https://img.shields.io/badge/tests-passing-green.svg)]()
 [![Coverage](https://img.shields.io/badge/coverage-81%25-brightgreen.svg)]()
 
-> An NLP-based grammar correction system built around fine-tuned T5, BERT error
-> detection, retrieval-augmented prompting, and responsible AI guardrails. The
-> repository includes the training, serving, benchmarking, and UI stack, with
-> heuristic fallbacks so the API remains runnable before local model weights are
-> added.
+> An NLP-based grammar correction system with a public Next.js product UI,
+> FastAPI serving layer, model research stack, and responsible AI guardrails.
+> The public experience intentionally hides internal pipeline details, while
+> operator tooling and heuristic fallbacks keep the project useful before local
+> model weights are added.
 
 ## Features
 
@@ -20,8 +20,10 @@
 - **Prompt Versioning** with semantic versioning, promotion, rollback, and metric tracking
 - **Responsible AI Guardrails** for input validation, toxicity checks, bias checks, and output validation
 - **FastAPI Backend** with correction, batch, evaluation, prompt, knowledge, and benchmark endpoints
-- **Interactive Gradio UI** with tabs for correction, batch processing, detection, prompt management, and evaluation
-- **Docker-ready Deployment** for API and UI services
+- **Public-Safe API** at `POST /public/correct` with a minimal user-facing response
+- **Next.js Product UI** with TypeScript, Tailwind CSS, change highlights, explanations, and copy support
+- **Legacy Gradio Operator UI** with tabs for correction, batch processing, detection, prompt management, and evaluation
+- **Docker-ready Deployment** for public frontend, API, and legacy UI services
 - **Testing and Profiling Tooling** with integration tests, coverage reporting, and performance profiling
 
 ## Architecture
@@ -70,6 +72,17 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+Run the API and public frontend in separate terminals:
+
+```bash
+python -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000` for the public product UI.
+
 ```python
 from src.pipeline.correction_pipeline import CorrectionPipeline
 from src.utils.config import load_config
@@ -87,7 +100,8 @@ docker-compose up --build
 ```
 
 - API docs: `http://localhost:8000/docs`
-- UI: `http://localhost:7860`
+- Public frontend: `http://localhost:3000`
+- Legacy Gradio UI: `http://localhost:7860`
 
 ## Project Structure
 
@@ -103,6 +117,7 @@ grammar-autocorrector/
 |-- Makefile
 |-- Dockerfile
 |-- docker-compose.yml
+|-- frontend/                # Public Next.js, TypeScript, and Tailwind CSS product UI
 |-- docs/                    # SRS, SDD, architecture, API, user, deployment, test docs
 |-- src/
 |   |-- models/             # T5, BERT, and RNN model implementations
@@ -149,9 +164,20 @@ python scripts/profile_pipeline.py
 ```bash
 make test
 make lint
+# Terminal 1: backend
 python -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+# Terminal 2: public product UI
+cd frontend && npm run dev
+# Optional terminal 3: legacy operator UI
 python src/ui/gradio_app.py
 ```
+
+## Current Limitations
+
+- Trained production checkpoints are not committed yet.
+- Official trained-model evaluation remains pending.
+- Login and an admin dashboard are planned for a future sprint.
+- Cloud deployment is planned for a later sprint.
 
 ## Documentation
 

@@ -22,6 +22,10 @@ knowledge-base retrieval, evaluation, and benchmarking over HTTP.
 
 ## Response Notes
 
+- `POST /public/correct` is the public product contract. Its response is
+  intentionally limited to corrected text, user-friendly changes, and a summary.
+  It never exposes model, prompt, retrieval, dataset, evaluation, or guardrail
+  internals.
 - `guardrail_report` contains the full input/output safety assessment returned
   by the unified `CorrectionPipeline`.
 - `model_version` identifies the correction path used, such as
@@ -30,6 +34,50 @@ knowledge-base retrieval, evaluation, and benchmarking over HTTP.
   in `auto` mode when retrieval is selected.
 - `request_id` is attached by middleware and mirrored in the response body for
   single-item correction requests.
+
+## POST `/public/correct`
+
+- Purpose: correct text for the public Next.js product UI
+- Visibility: public-safe response with internal pipeline details removed
+- Request schema:
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `text` | `str` | Yes | Trimmed text, `1-1000` chars |
+
+- Response schema:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `original_text` | `str` | Sanitized input text |
+| `corrected_text` | `str` | Improved text |
+| `changes` | `list[PublicCorrectionChange]` | User-friendly before and after fragments |
+| `summary` | `str` | Short result summary |
+| `success` | `bool` | Whether correction completed |
+
+Each `PublicCorrectionChange` contains `before`, `after`, and `explanation`.
+
+```bash
+curl -X POST http://localhost:8000/public/correct \
+  -H "Content-Type: application/json" \
+  -d "{\"text\":\"She go to school.\"}"
+```
+
+```json
+{
+  "original_text": "She go to school.",
+  "corrected_text": "She goes to school.",
+  "changes": [
+    {
+      "before": "go",
+      "after": "goes",
+      "explanation": "Grammar corrected for clarity and correctness."
+    }
+  ],
+  "summary": "1 grammar issue corrected.",
+  "success": true
+}
+```
 
 ## GET `/health`
 

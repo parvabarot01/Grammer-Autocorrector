@@ -187,6 +187,52 @@ class CorrectionResponse(BaseModel):
     request_id: str = Field(..., description="Request correlation identifier.")
 
 
+class PublicCorrectionRequest(BaseModel):
+    """Public single-text correction request model."""
+
+    text: str = Field(
+        ...,
+        min_length=1,
+        max_length=1000,
+        description="Input text to correct.",
+    )
+
+    @field_validator("text")
+    @classmethod
+    def normalize_text(cls, value: str) -> str:
+        """Trim public input and reject whitespace-only requests."""
+
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("Input text cannot be empty.")
+        return normalized
+
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"text": "She go to school."}}
+    )
+
+
+class PublicCorrectionChange(BaseModel):
+    """One user-friendly correction made to public input."""
+
+    before: str = Field(..., description="Original text fragment.")
+    after: str = Field(..., description="Improved text fragment.")
+    explanation: str = Field(..., description="Simple explanation of the correction.")
+
+
+class PublicCorrectionResponse(BaseModel):
+    """Public correction response without internal pipeline details."""
+
+    original_text: str = Field(..., description="Sanitized input text.")
+    corrected_text: str = Field(..., description="Corrected output text.")
+    changes: List[PublicCorrectionChange] = Field(
+        default_factory=list,
+        description="User-friendly before and after changes.",
+    )
+    summary: str = Field(..., description="Short correction summary.")
+    success: bool = Field(..., description="Whether correction completed successfully.")
+
+
 class BatchCorrectionRequest(BaseModel):
     """Batch correction request model."""
 

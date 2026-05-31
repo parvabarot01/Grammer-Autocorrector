@@ -1,14 +1,11 @@
-INFO:     Started server process [37720]
+INFO:     Started server process [19212]
 INFO:     Waiting for application startup.
-2026-05-26 01:09:22,060 | INFO | src.api.app | Starting Grammar Autocorrector API.
-2026-05-26 01:09:22,076 | INFO | src.pipeline.correction_pipeline | rag loaded in 1.85 ms
-2026-05-26 01:09:22,076 | WARNING | src.pipeline.correction_pipeline | t5 load failed: transformers is required for T5GrammarCorrector. Install it with `pip install transformers`.
-2026-05-26 01:09:22,076 | WARNING | src.pipeline.correction_pipeline | bert load failed: transformers is required for BERTGrammarDetector. Install it with `pip install transformers`.
-2026-05-26 01:09:22,076 | INFO | src.pipeline.correction_pipeline | Correction pipeline ready. models_loaded=False load_errors=2
+2026-05-31 16:00:22,106 | INFO | src.api.app | Starting Grammar Autocorrector API.
+2026-05-31 16:00:22,106 | INFO | src.pipeline.correction_pipeline | rag loaded in 1.60 ms
+2026-05-31 16:00:22,106 | WARNING | src.pipeline.correction_pipeline | t5 load failed: transformers is required for T5GrammarCorrector. Install it with `pip install transformers`.
+2026-05-31 16:00:22,106 | WARNING | src.pipeline.correction_pipeline | bert load failed: transformers is required for BERTGrammarDetector. Install it with `pip install transformers`.
+2026-05-31 16:00:22,106 | INFO | src.pipeline.correction_pipeline | Correction pipeline ready. models_loaded=False load_errors=2
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-2026-05-26 01:15:02,840 | INFO | src.api.app | GET / completed in 1.78 ms request_id=aa789b23-be71-4969-a646-e5c1b7a65a8d
-2026-05-26 01:15:03,003 | INFO | src.api.app | GET /favicon.ico completed in 0.63 ms request_id=6245c218-69df-4d66-bd37-71588bfb69f4
-2026-05-26 01:15:20,624 | INFO | src.api.app | GET / completed in 1.33 ms request_id=b5f31d1d-bc0b-4e58-8bbf-748b4200afce
-2026-05-26 01:15:21,107 | INFO | src.api.app | GET /favicon.ico completed in 1.40 ms request_id=f2305d08-e733-4f26-9684-6721aad819f9
-2026-05-26 01:43:58,431 | INFO | src.api.app | GET / completed in 17.23 ms request_id=47d29a62-424a-481a-9bc8-ea52252b2fd7
+2026-05-31 16:00:22,122 | INFO | src.api.app | GET /health completed in 3.58 ms request_id=ab93d9e2-4af4-4b40-861a-35286b767717
+2026-05-31 16:00:22,252 | INFO | src.api.app | POST /public/correct completed in 5.49 ms request_id=c4896466-3c53-467a-89a5-29425b8c1b7f

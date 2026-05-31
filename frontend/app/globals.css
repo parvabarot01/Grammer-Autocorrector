@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --graphite: #050816;
+  --navy: #071126;
+  --cyan: #67e8f9;
+  --blue: #60a5fa;
+  --violet: #c4b5fd;
+  --green: #6ee7b7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--graphite);
+  color: #f8fafc;
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+}
+
+::selection {
+  background: rgba(103, 232, 249, 0.24);
+  color: #ecfeff;
+}
+
+.tech-grid {
+  background-image:
+    linear-gradient(rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.08) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: linear-gradient(to bottom, black 10%, transparent 88%);
+}
+
+.scan-lines {
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(103, 232, 249, 0.035) 4px
+  );
+  background-size: 100% 5px;
+}
+
+.aurora {
+  animation: aurora-drift 16s ease-in-out infinite alternate;
+}
+
+.signal-line {
+  animation: signal-pulse 4s ease-in-out infinite;
+}
+
+.reveal {
+  animation: reveal-up 700ms ease-out both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 120ms;
+}
+
+.reveal-delay-2 {
+  animation-delay: 240ms;
+}
+
+.reveal-delay-3 {
+  animation-delay: 360ms;
+}
+
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(-4%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(5%, 4%, 0) scale(1.08);
+  }
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleX(0.94);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

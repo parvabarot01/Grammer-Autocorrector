@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from src.api.app import app
 from src.api.routes import get_pipeline
-from src.pipeline import CorrectionPipeline
+from src.pipeline import CorrectionPipeline, PromptVersionManager
 from src.utils.config import (
     APIConfig,
     Config,
@@ -37,6 +37,9 @@ def real_pipeline(tmp_path: Path) -> CorrectionPipeline:
         guardrails=GuardrailsConfig(),
     )
     pipeline = CorrectionPipeline(config)
+    pipeline.prompt_manager = PromptVersionManager(
+        str(tmp_path / "prompt_registry.json")
+    )
     pipeline.load_all()
     return pipeline
 

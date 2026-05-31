@@ -42,6 +42,21 @@ def _get_env_float(name: str, default: float) -> float:
         raise ValueError(f"Environment variable {name} must be a float.") from exc
 
 
+def _get_env_bool(name: str, default: bool) -> bool:
+    """Read a boolean environment variable."""
+
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    normalized = value.strip().casefold()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"Environment variable {name} must be a boolean.")
+
+
 def _get_env_path(name: str, default: Path) -> Path:
     """Read a path environment variable."""
 
@@ -97,6 +112,9 @@ class APIConfig:
     host: str = "0.0.0.0"
     port: int = 8000
     max_concurrent_requests: int = 100
+    enable_public_api: bool = True
+    show_model_details: bool = False
+    frontend_origin: str = "http://localhost:3000"
 
 
 @dataclass(frozen=True)
@@ -197,6 +215,9 @@ def load_config(dotenv_path: Optional[Union[str, Path]] = None) -> Config:
         host=_get_env_str("API_HOST", "0.0.0.0"),
         port=_get_env_int("API_PORT", 8000),
         max_concurrent_requests=_get_env_int("API_MAX_CONCURRENT_REQUESTS", 100),
+        enable_public_api=_get_env_bool("ENABLE_PUBLIC_API", True),
+        show_model_details=_get_env_bool("SHOW_MODEL_DETAILS", False),
+        frontend_origin=_get_env_str("FRONTEND_ORIGIN", "http://localhost:3000"),
     )
 
     guardrails_config = GuardrailsConfig(

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import asdict
+from difflib import SequenceMatcher
 from time import perf_counter
-from typing import Any
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
@@ -29,6 +31,8 @@ from src.api.schemas import (
     PromptPromoteResponse,
     PromptRollbackResponse,
     PromptVersionResponse,
+    PublicCorrectionRequest,
+    PublicCorrectionResponse,
 )
 from src.pipeline import CorrectionPipeline, GuardrailViolation
 
@@ -94,6 +98,24 @@ CORRECT_OPENAPI = {
             }
         }
     }
+}
+PUBLIC_CORRECT_OPENAPI = {
+    "requestBody": {
+        "content": {"application/json": {"example": {"text": "She go to school."}}}
+    },
+    "x-example-response": {
+        "original_text": "She go to school.",
+        "corrected_text": "She goes to school.",
+        "changes": [
+            {
+                "before": "go",
+                "after": "goes",
+                "explanation": "Grammar corrected for clarity and correctness.",
+            }
+        ],
+        "summary": "1 grammar issue corrected.",
+        "success": True,
+    },
 }
 BATCH_OPENAPI = {
     "requestBody": {
@@ -167,6 +189,59 @@ BENCHMARK_OPENAPI = {
         }
     }
 }
+
+
+def _format_change_fragment(tokens: List[str]) -> str:
+    """Join diff tokens into a compact user-facing text fragment."""
+
+    text = " ".join(tokens)
+    return re.sub(r"\s+([,.;:!?])", r"\1", text)
+
+
+def _build_public_changes(original: str, corrected: str) -> List[Dict[str, str]]:
+    """Build a small public-safe change list from corrected text."""
+
+    token_pattern = r"\w+(?:'\w+)?|[^\w\s]"
+    original_tokens = re.findall(token_pattern, original)
+    corrected_tokens = re.findall(token_pattern, corrected)
+    matcher = SequenceMatcher(
+        a=[token.casefold() for token in original_tokens],
+        b=[token.casefold() for token in corrected_tokens],
+    )
+
+    changes: List[Dict[str, str]] = []
+    for (
+        operation,
+        original_start,
+        original_end,
+        corrected_start,
+        corrected_end,
+    ) in matcher.get_opcodes():
+        if operation == "equal":
+            continue
+        changes.append(
+            {
+                "before": _format_change_fragment(
+                    original_tokens[original_start:original_end]
+                ),
+                "after": _format_change_fragment(
+                    corrected_tokens[corrected_start:corrected_end]
+                ),
+                "explanation": "Grammar corrected for clarity and correctness.",
+            }
+        )
+    return changes
+
+
+def _public_summary(changes: List[Dict[str, str]]) -> str:
+    """Return a concise public correction summary."""
+
+    issue_count = len(changes)
+    if issue_count == 0:
+        return "No grammar issues found."
+    if issue_count == 1:
+        return "1 grammar issue corrected."
+    return f"{issue_count} grammar issues corrected."
 
 
 @router.get("/health", response_model=HealthResponse, openapi_extra=HEALTH_OPENAPI)
@@ -244,6 +319,45 @@ def correct_text(
     serialized = pipeline.serialize(result)
     serialized["request_id"] = _request_id(request)
     return serialized
+
+
+@router.post(
+    "/public/correct",
+    response_model=PublicCorrectionResponse,
+    openapi_extra=PUBLIC_CORRECT_OPENAPI,
+)
+def public_correct_text(
+    payload: PublicCorrectionRequest,
+    request: Request,
+    pipeline: CorrectionPipeline = Depends(get_pipeline),
+) -> Any:
+    """Correct text through a deliberately minimal public response contract."""
+
+    if not request.app.state.config.api.enable_public_api:
+        raise _api_error(404, "Public correction API is disabled.")
+
+    try:
+        result = pipeline.serialize(pipeline.correct(text=payload.text, mode="auto"))
+    except GuardrailViolation as exc:
+        raise _api_error(422, str(exc)) from exc
+    except ValueError as exc:
+        raise _api_error(
+            400, "Unable to process text. Please check your input."
+        ) from exc
+    except Exception as exc:  # pragma: no cover - defensive server path
+        LOGGER.exception("Public correction failed.")
+        raise _api_error(500, "Unable to correct text right now.") from exc
+
+    original_text = str(result["original"])
+    corrected_text = str(result["corrected"])
+    changes = _build_public_changes(original_text, corrected_text)
+    return {
+        "original_text": original_text,
+        "corrected_text": corrected_text,
+        "changes": changes,
+        "summary": _public_summary(changes),
+        "success": True,
+    }
 
 
 @router.post(

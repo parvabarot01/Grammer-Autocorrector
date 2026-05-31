@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict
 from typing import Any, Dict, List
 
@@ -258,6 +259,53 @@ def test_correct_endpoint_empty_text_returns_400(client: TestClient) -> None:
 def test_correct_endpoint_text_too_long_returns_422(client: TestClient) -> None:
     response = client.post("/correct", json={"text": "a" * 1001})
     assert response.status_code == 422
+
+
+def test_public_correct_returns_only_public_safe_fields(client: TestClient) -> None:
+    response = client.post("/public/correct", json={"text": "  She go to school.  "})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert set(payload) == {
+        "original_text",
+        "corrected_text",
+        "changes",
+        "summary",
+        "success",
+    }
+    assert payload["original_text"] == "She go to school."
+    assert payload["corrected_text"] == "She goes to school."
+    assert payload["changes"][0]["before"] == "go"
+    assert payload["changes"][0]["after"] == "goes"
+    assert payload["success"] is True
+
+    serialized_payload = json.dumps(payload).casefold()
+    forbidden_terms = {
+        "model",
+        "model_name",
+        "checkpoint",
+        "prompt_version",
+        "rag",
+        "training",
+        "evaluation",
+        "debug",
+        "fallback",
+        "dataset",
+        "guardrail",
+        "t5",
+        "bert",
+        "rnn",
+    }
+    assert all(term not in serialized_payload for term in forbidden_terms)
+
+
+def test_public_correct_empty_text_returns_clean_validation_error(
+    client: TestClient,
+) -> None:
+    response = client.post("/public/correct", json={"text": "   "})
+
+    assert response.status_code == 422
+    assert "Input text cannot be empty." in response.text
 
 
 def test_batch_correct_returns_correct_count(client: TestClient) -> None:

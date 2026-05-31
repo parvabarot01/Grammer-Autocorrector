@@ -4,24 +4,48 @@
 
 1. Install dependencies with `pip install -r requirements.txt`.
 2. Start the API with `uvicorn src.api.app:app --host 0.0.0.0 --port 8000`.
-3. Start the UI with `python src/ui/gradio_app.py`.
-4. Open `http://localhost:7860` for the UI or `http://localhost:8000/docs` for the API docs.
+3. Run `cd frontend`, then install UI dependencies with `npm install`.
+4. Start the public UI with `npm run dev`.
+5. Open `http://localhost:3000` for the product UI or `http://localhost:8000/docs` for the API docs.
 
 If trained weights are not available locally, the system still runs using lightweight correction fallbacks so you can explore the end-to-end experience.
 
 ## First Correction
 
-Single-request example:
+Public single-request example:
 
 ```bash
-curl -X POST http://localhost:8000/correct \
+curl -X POST http://localhost:8000/public/correct \
   -H "Content-Type: application/json" \
-  -d "{\"text\":\"She go to school everyday.\",\"mode\":\"auto\"}"
+  -d "{\"text\":\"She go to school everyday.\"}"
 ```
 
-The response includes corrected text, optional detected errors, guardrail metadata, latency, model version, and prompt version.
+The public response includes the original text, corrected text, a simple list of
+changes, and a short summary. Internal model and pipeline details are
+intentionally hidden from public users.
 
-## Gradio UI
+## Public Next.js UI
+
+1. Open `http://localhost:3000`.
+2. Select `Try correction` or open `Correct Text`.
+3. Enter a sentence or short paragraph.
+4. Select `Correct text`.
+5. Review the improved text and the highlighted before/after changes.
+6. Select `Copy corrected text` to use the polished result elsewhere.
+
+The public UI includes loading and error states, a character counter, a reset
+button, and a responsive layout for mobile and desktop screens.
+
+## Legacy Gradio Operator UI
+
+Start the optional operator UI with:
+
+```bash
+python src/ui/gradio_app.py
+```
+
+Open `http://localhost:7860`. This interface remains available for internal
+testing and operational workflows.
 
 ### Correct Text
 Screenshot description: a multiline text box at the top, mode and decoding controls beneath it, corrected text on the right, highlighted error spans, and a JSON guardrail panel below.
@@ -65,6 +89,11 @@ Screenshot description: a file uploader for prediction/reference CSV files, metr
 
 ## REST API
 
+### POST `/public/correct`
+- Corrects text for the public product UI.
+- Returns only original text, corrected text, simple changes, a summary, and success status.
+- Does not expose model names, prompt versions, retrieval details, metrics, datasets, or guardrail internals.
+
 ### GET `/health`
 - Use it for health checks and readiness probes.
 - Returns service status, version, timestamp, and whether primary models loaded.
@@ -73,7 +102,7 @@ Screenshot description: a file uploader for prediction/reference CSV files, metr
 - Returns active prompt version and supported capabilities.
 
 ### POST `/correct`
-- Corrects one input string.
+- Corrects one input string for internal and operator workflows.
 - Supports `auto`, `t5`, and `rag` modes.
 
 ### POST `/correct/batch`

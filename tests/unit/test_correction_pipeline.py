@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from src.pipeline import CorrectionPipeline, GuardrailViolation
+from src.pipeline import CorrectionPipeline, GuardrailViolation, PromptVersionManager
 from src.utils.config import (
     APIConfig,
     Config,
@@ -34,6 +34,9 @@ def pipeline(tmp_path: Path) -> CorrectionPipeline:
         guardrails=GuardrailsConfig(),
     )
     instance = CorrectionPipeline(config)
+    instance.prompt_manager = PromptVersionManager(
+        str(tmp_path / "prompt_registry.json")
+    )
     instance.load_all()
     return instance
 

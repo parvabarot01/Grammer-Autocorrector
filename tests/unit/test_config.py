@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from src.utils.config import (
+    _get_env_bool,
     _get_env_float,
     _get_env_int,
     load_config,
@@ -27,6 +28,13 @@ def test_get_env_float_invalid_raises(monkeypatch: pytest.MonkeyPatch) -> None:
         _get_env_float("MODEL_LEARNING_RATE", 0.001)
 
 
+def test_get_env_bool_invalid_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ENABLE_PUBLIC_API", "sometimes")
+
+    with pytest.raises(ValueError, match="ENABLE_PUBLIC_API"):
+        _get_env_bool("ENABLE_PUBLIC_API", True)
+
+
 def test_load_config_reads_environment_overrides(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -38,6 +46,9 @@ def test_load_config_reads_environment_overrides(
 
     monkeypatch.setenv("MODEL_MAX_LENGTH", "256")
     monkeypatch.setenv("API_PORT", "9000")
+    monkeypatch.setenv("ENABLE_PUBLIC_API", "false")
+    monkeypatch.setenv("SHOW_MODEL_DETAILS", "true")
+    monkeypatch.setenv("FRONTEND_ORIGIN", "http://localhost:3100")
     monkeypatch.setenv("RAW_DATA_PATH", str(raw_dir))
     monkeypatch.setenv("PROCESSED_DATA_PATH", str(processed_dir))
     monkeypatch.setenv("SAMPLE_DATA_PATH", str(sample_dir))
@@ -47,6 +58,9 @@ def test_load_config_reads_environment_overrides(
 
     assert config.model.max_length == 256
     assert config.api.port == 9000
+    assert config.api.enable_public_api is False
+    assert config.api.show_model_details is True
+    assert config.api.frontend_origin == "http://localhost:3100"
     assert config.data.raw_data_path == raw_dir
     assert config.rag.vector_store_path == vector_dir
     assert raw_dir.exists()
